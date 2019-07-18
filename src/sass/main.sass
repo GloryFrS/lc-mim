@@ -1,0 +1,301 @@
+@import "vars"
+@import "fonts"
+@import "libs"
+
+::placeholder
+	color: #666
+
+::selection
+	background-color: $color
+	color: #fff
+@font-face
+    font-family: GothamPro
+    src: url("../fonts/GothamPro.ttf")
+
+.d-flex
+	display: flex
+	justify-content: space-between
+body
+	font-size: 16px
+	min-width: 320px
+	position: relative
+	line-height: 1.65
+	font-family: GothamPro
+	overflow-x: hidden
+	color: $text
+	input, textarea
+		border: #666 1px solid
+		outline: none
+		&:focus:required:invalid
+			border-color: red
+		&:required:valid
+			border-color: green
+header
+	background: $color
+	text-align: center
+	color: #ffffff
+	padding-top: 50px
+	text-align: center
+	padding-bottom: 80px
+	h5
+		font-weight: bold
+		font-size: 24px
+		margin-top: 22px
+	img
+		width: 156px
+		height: 156px
+		border-radius: 32px
+.container
+	padding-top: 76px
+	padding-bottom: 123px
+.img-responsive
+	display: block
+	max-width: 100%
+	height: auto
+	&.img-width
+		width: 100%
+
+.text-center
+	text-align: center
+
+b, strong
+	font-weight: bold
+
+.login
+    background: #ffffff
+    border-radius: 50px
+    box-shadow: 0px 20px 40px rgba(117, 117, 138, 0.2)
+    max-width: 784px
+    padding: 75px
+    h1
+        text-align: center
+        font-weight: bold
+        font-size: 36px
+        line-height: 38px
+        margin: 0
+        margin-bottom: 35px
+    form
+        display: flex
+        flex-flow: column
+        input
+            margin-bottom: 17px
+            width: 100%
+            background: #FFFFFF
+            border: 1px solid #CACACA
+            box-sizing: border-box
+            border-radius: 53px
+            height: 58px
+            padding: 5px 25px
+            max-width: 352px
+        .button
+            background: $color
+            color: #ffffff
+            font-weight: bold
+            font-size: 14px
+    .login-vk
+        font-style: normal
+        font-weight: bold
+        font-size: 14px
+        line-height: 21px 
+        text-align: center
+        text-decoration-line: underline
+        color: $color
+        margin: auto
+        display: block
+.body-login
+    background: $color
+    align-items: center
+    justify-content: center
+    height: 100vh
+.btn
+	background: $color
+	color: #ffffff
+	font-weight: bold
+	font-size: 14px
+	padding: 15px 45px
+	border-radius: 55px
+	text-align: center
+	display: block
+	max-width: 267px
+	&:hover
+		text-decoration: none
+		color: #ffffff	
+
+.title
+	font-weight: bold
+	font-size: 28px
+	color: #3F3F3F
+	margin-bottom: 30px
+	width: 100%
+.info-photo
+	width: 210px
+	height: 210px
+	border-radius: 16px
+.info
+	margin-left: 32px
+	p
+		margin-bottom: 20px
+	.info_name
+		font-weight: bold
+		font-size: 19px
+		color: $color
+	.info_phone
+		font-size: 17px
+		font-weight: bold
+	.info_adress
+		font-size: 16px
+.service
+	background: #FFFFFF
+	box-shadow: 0px 4px 40px rgba(191, 191, 208, 0.2)
+	border-radius: 43px
+	padding: 21px 32px
+	font-size: 16px
+	margin-right: 20px
+	margin-bottom: 18px
+	display: flex
+	justify-content: space-between	
+	span
+		text-align: right
+		color: $color
+		font-size: 16px
+.sample
+	margin-bottom: 38px
+	display: flex
+	flex-wrap: wrap
+	img
+		width: 161px
+		height: 161px
+		border-radius: 16px
+		margin-right: 17px
+		margin-bottom: 17px
+
+input[type="file"] 
+    display: none
+
+.sample-file-upload
+	background: url(../img/upload.png)
+	width: 161px
+	height: 161px
+	display: inline-block
+	padding: 6px 12px
+	cursor: pointer
+.banner
+	margin-top: 50px
+	img
+		width: 100%
+.edit-profile
+	margin-top: 25px
+	label
+		display: block
+		font-weight: bold
+		font-size: 18px
+		color: #3F3F3F
+		margin-top: 45px
+	.form-control
+		border: 1px solid #DBDBDB
+		box-sizing: border-box
+		border-radius: 43px
+		width: 100%
+		padding: 20px 35px
+.btn-block
+	flex-basis: 65%
+	.btn
+		margin-top: -9px
+		height: 53px
+		margin-right: 40px
+.btn-cancel
+	display: block
+	margin-top: 2px
+	font-weight: bold
+	font-size: 16px
+	text-align: center
+	color: $color
+	height: 30px
+
+.fix-label
+	display: block
+	width: 100%
+	padding: 0 15px
+#add, .del
+	display: flex
+	background: $color
+	width: 41px
+	height: 41px
+	align-items: center
+	justify-content: center
+	border-radius: 10px
+	color: #fff
+	font-size: 24px
+	font-weight: bold
+	&:hover
+		text-decoration: none
+#dynamic_field
+	.d-flex
+		align-items: center
+		margin: 15px 0
+	.del
+		background: #F9F9FB
+		color: $color
+		i
+			font-style: normal
+			transform: rotateZ(45deg)
+	p
+		border: 1px solid #dbdbdb
+		-webkit-box-sizing: border-box
+		box-sizing: border-box
+		border-radius: 43px
+		width: 100%
+		padding: 20px 35px
+		margin: 0
+		&:nth-child(1)
+			flex-basis: 50%
+		&:nth-child(2)
+			flex-basis: 33.333%
+#service
+	-webkit-appearance: none
+	-moz-appearance: none
+	appearance: none
+	background: url(../img/arrow.png) 90% / 15% no-repeat #ffffff
+	background-size: auto
+.btn-block-bottom
+	max-width: 400px
+	margin-top: 60px
+	align-items: center
+.container.fix
+	padding-top: 0
+	padding-bottom: 0
+	margin-top: -35px 
+.j-s
+	justify-content: center	
+.origin_Photo
+	width: 100%!important
+	height: 100%!important
+	margin: 0!important
+.popup-content
+	background: none!important
+	border: none!important
+.d-flex.j-s
+	.btn
+		margin-right: 20px
+		width: 358px
+		margin-top: 30px
+.map
+	margin-top: 50px
+.loading
+	display: flex
+	justify-content: center
+	align-content: center
+	height: 100vh
+	img
+		width: 40px
+		height: 40px
+		position: absolute
+		margin: auto
+		top: 50%
+.notFound
+    display: flex
+    justify-content: center
+    align-items: center
+    height: 100vh
+
+@import "media" // Always at the end
