@@ -2,6 +2,23 @@
 @import "fonts"
 @import "libs"
 
+button
+	border: none
+	margin: 0
+	padding: 0
+	width: auto
+	overflow: visible
+	background: transparent
+	color: inherit
+	font: inherit
+	line-height: normal
+	-webkit-font-smoothing: inherit
+	-moz-osx-font-smoothing: inherit
+	-webkit-appearance: none
+	&::-moz-focus-inner
+		border: 0
+		padding: 0
+
 ::placeholder
 	color: #666
 
@@ -297,5 +314,14 @@ input[type="file"]
     justify-content: center
     align-items: center
     height: 100vh
+.alert-success 
+    color: #155724
+    background-color: #d4edda
+    border-color: #c3e6cb
+    position: fixed
+    z-index: 99
+    top: calc(50% - 80px)
+    left: calc(50% - 256px)
+    padding: 30px 100px
 
 @import "media" // Always at the end

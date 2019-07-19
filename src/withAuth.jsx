@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import { Redirect } from 'react-router-dom';
 
-export default function withAuth(ComponentToProtect) {
-  return class extends Component {
-    constructor() {
-      super();
+
+class withAuth extends Component {
+    constructor(props) {
+      super(props);
       this.state = {
         loading: true,
         redirect: false,
@@ -29,6 +29,7 @@ export default function withAuth(ComponentToProtect) {
 
 
     render() {
+      const ComponentToProtect = this.props.ComponentToProtect;
       const { loading, redirect } = this.state;
       if (loading) {
         return null;
@@ -38,9 +39,10 @@ export default function withAuth(ComponentToProtect) {
       }
       return (
         <React.Fragment>
-          <ComponentToProtect {...this.props} />
+          <ComponentToProtect  {...this.props} />
         </React.Fragment>
       );
     }
   }
-}
+
+export default withAuth;

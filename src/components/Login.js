@@ -1,13 +1,20 @@
 import React from 'react';
+import Cookies from 'universal-cookie';
+// import { AppContextConsumer } from '../App';
 
+const cookies = new Cookies();
 
 class Login extends React.Component {
 	constructor(props){
 		super(props);
 		this.state = {
-			phone: '',
+			id: '',
 			password: ''
 		};
+		
+	}
+
+	componentDidMount() {
 		
 	}
 
@@ -30,7 +37,8 @@ class Login extends React.Component {
 		})
 		.then(res => {
 			if (res.status === 200) {
-			this.props.history.push('/profile');
+				cookies.set('id', this.state.id);
+				this.props.history.push('/profile');
 			} else {
 			const error = new Error(res.error);
 			throw error;
@@ -43,17 +51,21 @@ class Login extends React.Component {
 	}
 
 	
-
+	
 	render() {
+		
 		return (
 			<div className='body-login d-flex'>
 				<div className='login'>
-					<h1>Вход<br/> в личный кабинет</h1>
+				
+					<h1>Вход <br/> в личный кабинет</h1>
+					
+
 					<form onSubmit={this.onSubmit}>
 						<input type="text"
-							name="phone"
+							name="id"
 							placeholder="Ваш номер телефона 7xxxxxxxxxx"
-							value={this.state.phone}
+							value={this.state.id}
 							onChange={this.handleInputChange}
 							required
 							/>
@@ -74,3 +86,6 @@ class Login extends React.Component {
 
 }
 export default Login;
+export const AppContext = React.createContext({
+	id: "as"
+  });
