@@ -244,6 +244,7 @@ input[type="file"]
 	color: #fff
 	font-size: 24px
 	font-weight: bold
+	user-select: none
 	&:hover
 		text-decoration: none
 #dynamic_field
@@ -268,12 +269,14 @@ input[type="file"]
 			flex-basis: 50%
 		&:nth-child(2)
 			flex-basis: 33.333%
-#service
+#service, #service2
 	-webkit-appearance: none
 	-moz-appearance: none
 	appearance: none
 	background: url(../img/arrow.png) 90% / 15% no-repeat #ffffff
 	background-size: auto
+	height: 42px
+	padding: 10px 35px
 .btn-block-bottom
 	max-width: 400px
 	margin-top: 60px
@@ -323,5 +326,9 @@ input[type="file"]
     top: calc(50% - 80px)
     left: calc(50% - 256px)
     padding: 30px 100px
+#map
+	height: 250px
+.modal 
+	z-index: 9999!important
 
 @import "media" // Always at the end

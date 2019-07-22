@@ -43,7 +43,7 @@ class Profile extends React.Component {
 			.then(res => {
 				this.setState({services: res.data, loader2:true});
 				console.log(this.state.service);
-				})
+			})
 	}
 
 	geo = (e) => {

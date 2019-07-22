@@ -6,6 +6,7 @@ import Profile from './components/Profile';
 import EditProfile from './components/EditProfile';
 import Card from './components/Card';
 import {AppContext} from './components/Login';
+import axios from 'axios';
 
 
 const AppContextConsumer = AppContext.Consumer;
@@ -16,6 +17,7 @@ class App extends Component {
     super(props);
       this.state = {
         id: AppContext.id,
+        customerTypes: []
       };
     
     
@@ -23,7 +25,16 @@ class App extends Component {
  
 
   componentDidMount(){
-    
+    axios.get('http://vk.masterimodel.com/node/customerTypes.get')
+        .then(res=>{
+            if (Array.isArray(res.data)) {
+                // console.log("response:", response.data);
+                this.setState({customerTypes: res.data})
+            }
+        })
+        .catch(err => {
+            console.log(err);
+        });
   }
 
   render() {
@@ -34,10 +45,9 @@ class App extends Component {
             {({ id }) => (
             <h1>{id}</h1>
             )}
-            
           </AppContextConsumer>
-          <li><Link to="/profile">Secret</Link></li>
-          <li><Link to="/login">Login</Link></li>
+          <li><Link to="/profile">Мой профиль</Link></li>
+          <li><Link to="/login">Вход</Link></li>
         </ul>
         
           <Switch>
@@ -54,6 +64,8 @@ class App extends Component {
             <Route path="/edit" render={(props)=>(
               <WithAuth {...props}
                 ComponentToProtect={EditProfile}
+                customerTypes={this.state.customerTypes}
+
               />
             )} />
             <Route path="/card/:id" render={(props)=>(
@@ -61,8 +73,6 @@ class App extends Component {
                 ComponentToProtect={Card}
               />
             )} />
-            {/* <Route path="/edit" component={withAuth(EditProfile)} />
-            <Route path="/card/:id" component={withAuth(Card)} /> */}
             <Redirect to="/profile"/>
           </Switch>
         

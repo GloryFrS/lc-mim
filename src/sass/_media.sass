@@ -35,4 +35,12 @@
   .container 
     padding-top: 50px
     padding-bottom: 50px
-
+  
+@include media-breakpoint-down(xl)
+  .modal-content, .modal-card
+    max-height: calc(100vh)!important
+    width: 800px!important
+  .modal-dialog 
+    max-width: 800px!important
+    margin: 1.75rem auto
+  

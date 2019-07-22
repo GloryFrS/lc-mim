@@ -11,8 +11,10 @@ class Card extends React.Component {
         loader: false,
         id: this.props.match.params.id,
         master: null,
-        services: []
+        services: [],
+        address: ''
       }
+      this.geo = this.geo.bind(this);
     }
 
     componentDidMount() {
@@ -36,6 +38,26 @@ class Card extends React.Component {
       
       
     }
+    geo = (e) => {
+      e.preventDefault();
+      let obj = this.state.master[0].coordinates;
+      let coor = JSON.parse(obj);
+      axios.get('https://api.opencagedata.com/geocode/v1/json', {
+        params: {
+          q: coor.lat.toString() + ',' + coor.lng.toString(), //"41.40139,2.12870"
+          key: "fb0d5699bd8145b68ec866138df4a623",
+          language: "ru",
+          pretty: 1
+  
+        }
+      })
+      .then((res) => {
+        this.setState({address: res.data.results[0].formatted})
+      })
+      .catch(function (err) {
+        console.log(err);
+      })  
+    }
 
     render() {
       const {master, services, loader, id} = this.state;
@@ -58,12 +80,13 @@ class Card extends React.Component {
           <img src={notFound} alt=""/>
         </div>
       )} 
+      const { address } = this.state;
       return (
           <div>
             <header>
               <img src={master.avatar_url} alt="" />
               <h5>{master[0].full_name}</h5>
-              <p>Россия, г. Барнаул, ул. Попова, д. 102</p>
+              <p>{address===''? <p onClick={this.geo} className="info_adress">Нажмите, чтобы показать адрес</p> : <p>{address}</p>}</p>
             </header>
             <div className="container fix">
               <div className="row">
