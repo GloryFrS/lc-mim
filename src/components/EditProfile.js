@@ -30,12 +30,13 @@ class EditProfile extends React.Component {
       select: '',
       select2: '',
       query: '',
-      apikey: 'fb0d5699bd8145b68ec866138df4a623',
       isSubmitting: false,
       response: {},
       modal: false,
       backdrop: true,
-      alertErr: false
+      alertErr: false,
+      api: '',
+      apiG: ''
     }
     this.handleInputChange = this.handleInputChange.bind(this);
     this.handleOnSubmit = this.handleOnSubmit.bind(this);
@@ -67,16 +68,23 @@ class EditProfile extends React.Component {
             loader: true,
             select: ''
           });
-				console.log(res.data);
         })
         axios.post(
           'http://vk.masterimodel.com/node/masterServices.get', params,
           {headers: {'Content-Type': 'application/x-www-form-urlencoded', 'PARAM_HEADER': "eyJ0eXAiOiJKV1QiLC"}})
           .then(res => {
             this.setState({services: res.data});
-            console.log(this.state.service);
           })
-        
+        const cook = {
+          "token": cookies.get('token')
+        };
+        axios.post('http://vk.masterimodel.com:3004/sssh', cook)
+          .then(res => {
+            this.setState({
+              api: res.data.api,
+              apiG: res.data.apiG
+            });
+          })
   }
   toggle() {
     this.setState(prevState => ({
@@ -91,9 +99,8 @@ class EditProfile extends React.Component {
     event.preventDefault();
     this.setState({ isSubmitting: true });
     opencage
-      .geocode({ key: this.state.apikey, q: this.state.query })
+      .geocode({ key: this.state.apiG, q: this.state.query })
       .then(response => {
-        console.log(response);
         this.setState({ response, isSubmitting: false });
       })
       .catch(err => {
@@ -119,7 +126,6 @@ class EditProfile extends React.Component {
           .then(res => {
             if (res.data.hasOwnProperty('customer_services')) {
                 this.setState({servicesTemp: res.data});
-                console.log(res.data);
             }
           })
           .catch(err => {
@@ -144,7 +150,7 @@ class EditProfile extends React.Component {
     params.append('is_approved',    false);
     params.append('is_immediately', false);
     params.append('reviews_number', "0");
-    params.append('api_key',        "5dec5986d30fb2dc1a92bb6d1e055447a359f0590e6794706eb991bbb4eab090");
+    params.append('api_key',        this.state.api);
 
 
     axios.post(
@@ -155,9 +161,6 @@ class EditProfile extends React.Component {
         if (res.data.status === "ok") {
           this.setState({alert: true});
         }
-
-        console.log("params:", params);
-        console.log("response:", res);
       })
       .catch(function (error) {
           console.log(error);
@@ -192,7 +195,7 @@ class EditProfile extends React.Component {
     }
     
     // this.state.services.push(service);
-    console.log(this.state.services);
+    
     if (select.trim() !== '' && select2 !== '' && price.trim() !== '') {
       
       
@@ -202,7 +205,7 @@ class EditProfile extends React.Component {
       params.append('customer_types_id',      select);
       params.append('customer_services_id',   select2);
       params.append('price',   price); 
-      params.append('api_key',        "5dec5986d30fb2dc1a92bb6d1e055447a359f0590e6794706eb991bbb4eab090");
+      params.append('api_key',        this.state.api);
 
       axios.post(
         'http://vk.masterimodel.com/node/masterServices.add', params,
@@ -218,9 +221,6 @@ class EditProfile extends React.Component {
           }else {
             this.setState({alertErr: true});
           }
-  
-          console.log("params:", params);
-          console.log("response:", res);
         })
         .catch(function (error) {
             console.log(error);
@@ -233,14 +233,13 @@ class EditProfile extends React.Component {
   deleteSetvice(e, i, id_type, id_service){
     e.preventDefault();
     
-    console.log(id_type, id_service);
 
     const { id } = this.state;
     const params = new URLSearchParams();
     params.append('id', id);
     params.append('customer_types_id',      id_type);
     params.append('customer_services_id',   id_service); 
-    params.append('api_key',        "5dec5986d30fb2dc1a92bb6d1e055447a359f0590e6794706eb991bbb4eab090");
+    params.append('api_key',        this.state.api);
     
     axios.post(
     'http://vk.masterimodel.com/node/masterServices.delete', params,
@@ -248,8 +247,6 @@ class EditProfile extends React.Component {
 
     .then(response => {
 
-        console.log("params:",   params);
-        console.log("response:", response);
 
         if (response.data.hasOwnProperty('status') && response.data.status === 'ok') {
             this.setState({ alert: true });

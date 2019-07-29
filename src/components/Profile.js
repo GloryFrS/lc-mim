@@ -24,7 +24,9 @@ class Profile extends React.Component {
 			loader2: false,
 			id: cookies.get('name'),
 			alertSucces: false,
-			alertErr: false
+			alertErr: false,
+			api: '',
+			apiG: ''
 		};
 		this.geo = this.geo.bind(this);
 		this.handleUploadImage = this.handleUploadImage.bind(this);
@@ -39,14 +41,24 @@ class Profile extends React.Component {
             {headers: {'Content-Type': 'application/x-www-form-urlencoded', 'PARAM_HEADER': "eyJ0eXAiOiJKV1QiLC"}})
             .then(res => {
 				this.setState({master: res.data, loader: true});
-				console.log(this.state.master);
 			  })
 		axios.post(
 			'http://vk.masterimodel.com/node/masterServices.get', params,
 			{headers: {'Content-Type': 'application/x-www-form-urlencoded', 'PARAM_HEADER': "eyJ0eXAiOiJKV1QiLC"}})
 			.then(res => {
 				this.setState({services: res.data, loader2:true});
-				console.log(this.state.service);
+			})
+
+		const cook = {
+			"token": cookies.get('token')
+		};
+		
+		axios.post('http://vk.masterimodel.com:3004/sssh', cook)
+			.then(res => {
+				this.setState({
+					api: res.data.api,
+					apiG: res.data.apiG
+				});
 			})
 	}
 
@@ -56,19 +68,20 @@ class Profile extends React.Component {
 		let coor = JSON.parse(obj);
 		axios.get('https://api.opencagedata.com/geocode/v1/json', {
 			params: {
-			  q: coor.lat.toString() + ',' + coor.lng.toString(), //"41.40139,2.12870"
-			  key: "fb0d5699bd8145b68ec866138df4a623",
-			  language: "ru",
-			  pretty: 1
+			q: coor.lat.toString() + ',' + coor.lng.toString(), //"41.40139,2.12870"
+			key: this.state.apiG,
+			language: "ru",
+			pretty: 1
 
 			}
-		  })
-		  .then((res) => {
+		})
+		.then((res) => {
 			this.setState({address: res.data.results[0].formatted})
-		  })
-		  .catch(function (err) {
+		})
+		.catch(function (err) {
 			console.log(err);
-		  })  
+		})
+		  
 	}
 	
 	handleUploadImage(ev) {
@@ -77,7 +90,7 @@ class Profile extends React.Component {
         const data = new FormData();
 
         data.append('id', this.state.id);  //this.uploadInput.files[0]);
-        data.append('api_key',  '5dec5986d30fb2dc1a92bb6d1e055447a359f0590e6794706eb991bbb4eab090'); //this.uploadInput.files[0]);
+        data.append('api_key',  this.state.api); //this.uploadInput.files[0]);
 
         for (let i = 0; i < this.uploadInput.files.length; i++) {
             data.append(`file${i + 1}`, this.uploadInput.files[i]);
@@ -85,9 +98,7 @@ class Profile extends React.Component {
 		
 		if (this.state.master.portfolio.length < 4) {
 			axios.post('http://vk.masterimodel.com/node/masterPortfolio.add', data)
-            .then(function (response) {
-                console.log(response)
-
+            .then(response => {
                 if (response.data.status === 'ok') {
 					this.setState({alertSucces: true});
 					document.location.reload();

@@ -36,7 +36,6 @@ class Login extends React.Component {
 			'http://vk.masterimodel.com:3004/login', JSON.stringify(this.state),
 			{headers: {'Content-Type': 'application/json'}})
 		.then(res => {
-			console.log(res.data.token);
 			if (res.status === 200) {
 				cookies.set('name', this.state.name);
 				cookies.set('token', res.data.token);
