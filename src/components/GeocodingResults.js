@@ -2,14 +2,12 @@ import React, { Component } from 'react';
 import classnames from 'classnames';
 
 import ResultList from './ResultList';
-import ResultJSON from './ResultJSON';
 import ResultMap from './ResultMap';
 
 // import './GeocodingResults.css';
 
 const RESULT_TAB = 'RESULT_TAB';
 const MAP_TAB = 'MAP_TAB';
-const JSON_TAB = 'JSON_TAB';
 
 class GeocodingResults extends Component {
   constructor(props) {

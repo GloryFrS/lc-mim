@@ -2,7 +2,7 @@
 import React, { Component } from 'react';
 class ResultList extends Component {
   render() {
-    const rate = this.props.response.rate || {};
+    // const rate = this.props.response.rate || {};
     const results = this.props.response.results || [];
     return (
       <article className="message">

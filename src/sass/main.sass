@@ -317,15 +317,18 @@ input[type="file"]
     justify-content: center
     align-items: center
     height: 100vh
+.alert
+	position: fixed
+	z-index: 99
+	top: calc(50% - 80px)
+	left: calc(50% - 256px)
+	padding: 30px 100px
 .alert-success 
     color: #155724
     background-color: #d4edda
     border-color: #c3e6cb
-    position: fixed
-    z-index: 99
-    top: calc(50% - 80px)
-    left: calc(50% - 256px)
-    padding: 30px 100px
+.alert-danger
+	left: calc(50% - 143px)
 #map
 	height: 250px
 .modal 

@@ -86,15 +86,16 @@ class Card extends React.Component {
             <header>
               <img src={master.avatar_url} alt="" />
               <h5>{master[0].full_name}</h5>
-              <p>{address===''? <p onClick={this.geo} className="info_adress">Нажмите, чтобы показать адрес</p> : <p>{address}</p>}</p>
+              {address === '' ? <p onClick={this.geo} className="info_adress">Нажмите, чтобы показать адрес</p> : <p>{address}</p>}
             </header>
             <div className="container fix">
               <div className="row">
                 {servicesList}
               </div>
               <div className="d-flex j-s">
-                <a className="btn" href={"tel:" + master[0].phone_number}>Позвонить</a>
-                <a className="btn" target="_blank" rel='noreferrer noopener' href={"https://vk.com/id" + id}>Написать</a>
+                <a className="btn" href={"https://vk.com/app6967349#master?id" + id}>Позвонить</a>
+                <a className="btn" target="_blank" rel='noreferrer noopener' href={"https://vk.com/app6967349#master?id" + id}>Написать</a>
+                <a className="btn" target="_blank" rel='noreferrer noopener' href={"https://vk.com/app6967349#master?id" + id}>Отзывы</a>
               </div>
               <div className="map">
               </div>

@@ -1,6 +1,9 @@
 import React from 'react';
 import Cookies from 'universal-cookie';
+import axios from 'axios';
+import { Alert } from 'reactstrap';
 // import { AppContextConsumer } from '../App';
+
 
 const cookies = new Cookies();
 
@@ -8,10 +11,11 @@ class Login extends React.Component {
 	constructor(props){
 		super(props);
 		this.state = {
-			id: '',
-			password: ''
+			name: '',
+			password: '',
+			alertErr: false
 		};
-		
+		this.onDismiss = this.onDismiss.bind(this);
 	}
 
 	componentDidMount() {
@@ -28,16 +32,14 @@ class Login extends React.Component {
 
 	onSubmit = (event) => {
 		event.preventDefault();
-		fetch('/api/authenticate', {
-			method: 'POST',
-			body: JSON.stringify(this.state),
-			headers: {
-			'Content-Type': 'application/json'
-			}
-		})
+		axios.post(
+			'http://vk.masterimodel.com:3004/login', JSON.stringify(this.state),
+			{headers: {'Content-Type': 'application/json'}})
 		.then(res => {
+			console.log(res.data.token);
 			if (res.status === 200) {
-				cookies.set('id', this.state.id);
+				cookies.set('name', this.state.name);
+				cookies.set('token', res.data.token);
 				this.props.history.push('/profile');
 			} else {
 			const error = new Error(res.error);
@@ -46,32 +48,34 @@ class Login extends React.Component {
 		})
 		.catch(err => {
 			console.error(err);
-			alert('Error logging in please try again');
+			this.setState({alertErr: true})
+			
 		});
 	}
-
+	onDismiss() {
+		this.setState({ alertSucces: false, alertErr: false });
+	  }
 	
 	
 	render() {
 		
 		return (
 			<div className='body-login d-flex'>
-				<div className='login'>
+				<Alert color="danger" isOpen={this.state.alertErr} toggle={this.onDismiss}>"Неверно введен логин или пароль"</Alert>
 				
+				<div className='login'>
 					<h1>Вход <br/> в личный кабинет</h1>
-					
-
 					<form onSubmit={this.onSubmit}>
 						<input type="text"
-							name="id"
-							placeholder="Ваш номер телефона 7xxxxxxxxxx"
-							value={this.state.id}
+							name="name"
+							placeholder="Введите ВК ID"
+							value={this.state.name}
 							onChange={this.handleInputChange}
 							required
 							/>
 						<input type="password"
 						name="password"
-						placeholder="Enter password"
+						placeholder="Введите пароль"
 						value={this.state.password}
 						onChange={this.handleInputChange}
 						required />

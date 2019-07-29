@@ -6,7 +6,7 @@ import loading from '../img/loading.gif';
 import GeocodingForm from './GeocodingForm';
 import GeocodingResults from './GeocodingResults';
 import * as opencage from 'opencage-api-client';
-import { Button, Modal, ModalHeader, ModalBody, ModalFooter, Input, Label, Form, FormGroup } from 'reactstrap';
+import { Button, Modal, ModalHeader, ModalBody} from 'reactstrap';
 
 const cookies = new Cookies();
 
@@ -14,7 +14,7 @@ class EditProfile extends React.Component {
   constructor(props){
     super(props);
     this.state={
-      id: cookies.get('id'),
+      id: cookies.get('name'),
       services: [],
       name: '',
       phone: '',
@@ -28,12 +28,14 @@ class EditProfile extends React.Component {
       newServices: [],
       servicesTemp:false,
       select: '',
+      select2: '',
       query: '',
       apikey: 'fb0d5699bd8145b68ec866138df4a623',
       isSubmitting: false,
       response: {},
       modal: false,
-      backdrop: true
+      backdrop: true,
+      alertErr: false
     }
     this.handleInputChange = this.handleInputChange.bind(this);
     this.handleOnSubmit = this.handleOnSubmit.bind(this);
@@ -146,30 +148,30 @@ class EditProfile extends React.Component {
 
 
     axios.post(
-        'http://vk.masterimodel.com/node/masters.edit', params,
-        {headers: {'Content-Type': 'application/x-www-form-urlencoded', 'PARAM_HEADER': "eyJ0eXAiOiJKV1QiLC"}})
+      'http://vk.masterimodel.com/node/masters.edit', params,
+      {headers: {'Content-Type': 'application/x-www-form-urlencoded', 'PARAM_HEADER': "eyJ0eXAiOiJKV1QiLC"}})
 
-        .then(res =>{
-          if (res.data.status === "ok") {
-            this.setState({alert: true});
-          }
+      .then(res =>{
+        if (res.data.status === "ok") {
+          this.setState({alert: true});
+        }
 
-          console.log("params:", params);
-          console.log("response:", res);
-        })
-        .catch(function (error) {
-            console.log(error);
-        });
+        console.log("params:", params);
+        console.log("response:", res);
+      })
+      .catch(function (error) {
+          console.log(error);
+      });
 
   }
   onDismiss() {
-    this.setState({ alert: false });
+    this.setState({ alert: false, alertErr: false });
   }
   
   getSelectedText(elementId) {
     const elt = document.getElementById(elementId);
 
-    if (elt.selectedIndex == -1)
+    if (elt.selectedIndex === -1)
         return null;
 
     return elt.options[elt.selectedIndex].text;
@@ -178,7 +180,7 @@ class EditProfile extends React.Component {
 
   setNewService (e) {
     e.preventDefault();
-    const { select, select2 } = this.state;
+    const { id, select, select2, price } = this.state;
     const label = this.getSelectedText('service');
     const label2 = this.getSelectedText('service2');
     const service = {
@@ -186,34 +188,91 @@ class EditProfile extends React.Component {
         customer_services_id: select2, 
         customer_types_label: label, 
         customer_services_label: label2, 
-        price: this.state.price
+        price: price
     }
     
     // this.state.services.push(service);
     console.log(this.state.services);
+    if (select.trim() !== '' && select2 !== '' && price.trim() !== '') {
+      
+      
+
+      const params = new URLSearchParams();
+      params.append('id', id);
+      params.append('customer_types_id',      select);
+      params.append('customer_services_id',   select2);
+      params.append('price',   price); 
+      params.append('api_key',        "5dec5986d30fb2dc1a92bb6d1e055447a359f0590e6794706eb991bbb4eab090");
+
+      axios.post(
+        'http://vk.masterimodel.com/node/masterServices.add', params,
+        {headers: {'Content-Type': 'application/x-www-form-urlencoded', 'PARAM_HEADER': "eyJ0eXAiOiJKV1QiLC"}})
+  
+        .then(res =>{
+          if (res.data.status === "ok") {
+            // this.setState({alert: true});
+            this.setState(prevState => ({
+              services: [...prevState.services, service],
+              alert: true
+            }))
+          }else {
+            this.setState({alertErr: true});
+          }
+  
+          console.log("params:", params);
+          console.log("response:", res);
+        })
+        .catch(function (error) {
+            console.log(error);
+        });
+
+    }
     
-    this.setState(prevState => ({
-        services: [...prevState.services, service]
-    }))
   }
 
-  deleteSetvice(e, i){
+  deleteSetvice(e, i, id_type, id_service){
     e.preventDefault();
-    let arr = [...this.state.services]; // make a separate copy of the array
-    if (i !== -1) {
-      arr.splice(i, 1);
-      this.setState({services: arr});
-    }
-    console.log(i);
+    
+    console.log(id_type, id_service);
+
+    const { id } = this.state;
+    const params = new URLSearchParams();
+    params.append('id', id);
+    params.append('customer_types_id',      id_type);
+    params.append('customer_services_id',   id_service); 
+    params.append('api_key',        "5dec5986d30fb2dc1a92bb6d1e055447a359f0590e6794706eb991bbb4eab090");
+    
+    axios.post(
+    'http://vk.masterimodel.com/node/masterServices.delete', params,
+    {headers: {'Content-Type': 'application/x-www-form-urlencoded', 'PARAM_HEADER': "eyJ0eXAiOiJKV1QiLC"}})
+
+    .then(response => {
+
+        console.log("params:",   params);
+        console.log("response:", response);
+
+        if (response.data.hasOwnProperty('status') && response.data.status === 'ok') {
+            this.setState({ alert: true });
+            let arr = [...this.state.services]; 
+            if (i !== -1) {
+              arr.splice(i, 1);
+              this.setState({services: arr});
+            }
+        }
+    })
+
+    .catch(function (error) {
+        console.log(error);
+    });
   }
    
   render() {
-    const { name,phone,lat,lng,vk,about,alert,loader,price,services } = this.state;
+    const { name,phone,lat,lng,vk,about,alert,alertErr,loader,price,services } = this.state;
     const listServices = services.map((service, index) =>
       <div key={index} className="d-flex" style={{"alignItems": "center"}}>
         <p>{service.customer_services_label} / {service.customer_types_label}</p>
         <p>{service.price} руб.</p>
-        <button type="button" onClick={(event) => this.deleteSetvice(event, index)} id={index} className="del" >
+        <button type="button" onClick={(event) => this.deleteSetvice(event, index, service.customer_types_id, service.customer_services_id)} id={index} className="del" >
           <i >+</i>
         </button>
       </div>
@@ -234,12 +293,13 @@ class EditProfile extends React.Component {
         <div className="row">
         <div className="col-12">
             <Alert color="success" isOpen={alert} toggle={this.onDismiss}>"Данные успешно отредактированы!"</Alert>
+            <Alert color="danger" isOpen={alertErr} toggle={this.onDismiss}>"Ошибка, такая услуга уже есть!"</Alert>
             <form onSubmit={this.handleOnSubmit} className="edit-profile">
               <div className="d-flex">
                   <h3 className="title">Редактирование профиля</h3>
                   <div className="btn-block d-flex">
                       <button type="submit" className="btn">Сохранить изменения</button>
-                      <button type="reset" onClick={(e) => this.props.history.goBack()} className=" btn-cancel">Отмена</button>
+                      <button type="reset" onClick={() => this.props.history.goBack()} className=" btn-cancel">Отмена</button>
                   </div>
               </div>
               <div className="row">
@@ -287,6 +347,7 @@ class EditProfile extends React.Component {
                     </div>
                     <div className="col-md-4">
                       <select name="select2" className="form-control" id="service2" value={this.state.select2} onChange={this.handleInputChange}>
+                        <option>Выберите услугу</option>
                         { this.state.servicesTemp ? this.state.servicesTemp.customer_services.map((service) =>
                           <option key={service.id} value={service.id}>{service.label}</option>
                         ) : '' }
@@ -306,7 +367,7 @@ class EditProfile extends React.Component {
           </div>
           <div className="btn-block-bottom d-flex">
               <button type="submit" className="btn" href="/card">Сохранить изменения</button>
-              <button type="reset" onClick={this.goBack} className=" btn-cancel">Отмена</button>
+              <button type="reset" onClick={() => this.props.history.goBack()} className=" btn-cancel">Отмена</button>
           </div>
         </form>
         

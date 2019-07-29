@@ -1,5 +1,13 @@
 import React, { Component } from 'react';
 import { Link, Route, Switch, Redirect } from 'react-router-dom';
+import {
+  Collapse,
+  Navbar,
+  NavbarToggler,
+  NavbarBrand,
+  Nav,
+  NavItem
+ } from 'reactstrap';
 import WithAuth from './withAuth';
 import Login from './components/Login';
 import Profile from './components/Profile';
@@ -17,8 +25,11 @@ class App extends Component {
     super(props);
       this.state = {
         id: AppContext.id,
-        customerTypes: []
+        customerTypes: [],
+        isOpen: false
       };
+      this.toggle = this.toggle.bind(this);
+    
     
     
   }
@@ -37,18 +48,36 @@ class App extends Component {
         });
   }
 
+  toggle() {
+    this.setState({
+      isOpen: !this.state.isOpen
+    });
+  }
+
   render() {
     return (
       <div>
-        <ul>
-          <AppContextConsumer>
+        <Navbar color="light" light expand="md">
+          <NavbarBrand href="/">Мастер и Модель</NavbarBrand>
+          <NavbarToggler onClick={this.toggle} />
+          <Collapse isOpen={this.state.isOpen} navbar>
+            <Nav className="ml-auto" navbar>
+              <NavItem>
+                <Link className='nav-link' to="/login/">Войти</Link>
+              </NavItem>
+              <NavItem>
+                <Link className='nav-link' to="/profile">Мой профиль</Link>
+              </NavItem>
+            </Nav>
+          </Collapse>
+        </Navbar>
+        
+          {/* <AppContextConsumer>
             {({ id }) => (
             <h1>{id}</h1>
             )}
-          </AppContextConsumer>
-          <li><Link to="/profile">Мой профиль</Link></li>
-          <li><Link to="/login">Вход</Link></li>
-        </ul>
+          </AppContextConsumer> */}
+          
         
           <Switch>
             <Route path="/login" render={(props)=>(

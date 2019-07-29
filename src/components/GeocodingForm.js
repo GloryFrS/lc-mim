@@ -55,7 +55,7 @@ class GeocodingForm extends Component {
     event.preventDefault();
   }
   render() {
-    const { apikey, isSubmitting, query } = this.props;
+    const { isSubmitting, query } = this.props;
     const { isLocating } = this.state;
     return (
       <div className="box form">

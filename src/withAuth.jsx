@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
 import { Redirect } from 'react-router-dom';
+import axios from 'axios';
+import Cookies from 'universal-cookie';
 
-
+const cookies = new Cookies();
 class withAuth extends Component {
     constructor(props) {
       super(props);
@@ -12,7 +14,11 @@ class withAuth extends Component {
     }
 
     componentDidMount() {
-      fetch('/checkToken')
+      
+      const cook = {
+        "token": cookies.get('token')
+      };
+      axios.post('http://vk.masterimodel.com:3004/checkToken', cook,)
         .then(res => {
           if (res.status === 200) {
             this.setState({ loading: false });

@@ -7,6 +7,7 @@ import axios from 'axios';
 import {Link} from 'react-router-dom';
 import Cookies from 'universal-cookie';
 import { VKShareButton } from 'react-share';
+import { Alert } from 'reactstrap';
 
 const cookies = new Cookies();
 
@@ -21,10 +22,13 @@ class Profile extends React.Component {
 			address: '',
 			services: [],
 			loader2: false,
-			id: cookies.get('id')
+			id: cookies.get('name'),
+			alertSucces: false,
+			alertErr: false
 		};
 		this.geo = this.geo.bind(this);
 		this.handleUploadImage = this.handleUploadImage.bind(this);
+		this.onDismiss = this.onDismiss.bind(this);
 	}
 	componentDidMount() {
 		const params = new URLSearchParams();
@@ -77,30 +81,39 @@ class Profile extends React.Component {
 
         for (let i = 0; i < this.uploadInput.files.length; i++) {
             data.append(`file${i + 1}`, this.uploadInput.files[i]);
-        }
-
-        axios.post('http://vk.masterimodel.com/node/masterPortfolio.add', data)
+		}
+		
+		if (this.state.master.portfolio.length < 4) {
+			axios.post('http://vk.masterimodel.com/node/masterPortfolio.add', data)
             .then(function (response) {
                 console.log(response)
 
                 if (response.data.status === 'ok') {
-					alert("Файлы успешно добавлены!");
+					this.setState({alertSucces: true});
 					document.location.reload();
 					
                 } else {
-                    alert("Woops! Something is wrong"); //
+					this.setState({alertErr: true});
                 }
 
             })
             .catch(function (error) {
                 console.log(error);
             });
-    }
+		} else {
+			this.setState({alertErr: true});
+		}
+
+        
+	}
+	onDismiss() {
+		this.setState({ alertSucces: false, alertErr: false });
+	  }
 
 	render() {
 		
 		if (this.state.loader && this.state.loader2) {
-			const {master, services, address} = this.state;
+			const {master, services, address, alertErr, alertSucces} = this.state;
 			const about = decodeURI(master[0].about_master);
 			const servicesList = services.map((service, index) =>
 				<div key={index} className=" col-12 col-md-6">
@@ -120,18 +133,24 @@ class Profile extends React.Component {
 			
 			return (
 				<div className="container">
+					<Alert color="success" isOpen={alertSucces} toggle={this.onDismiss}>"Портфолио обновлено!"</Alert>
+            		<Alert color="danger" isOpen={alertErr} toggle={this.onDismiss}>"Ошибка, нельзя добавить больше 4 фотографий"</Alert>
 					<div className="row">
 						<div className="col-12">
 							<h3 className="title">Ваш профиль</h3>
 							<div className="row no-gutters">
-								<img className="info-photo" src={master.avatar_url} alt="" />
-								<div className="info">
-									<p className="info_name">{master[0].full_name}</p>
-									<p className="info_phone">{master[0].phone_number}</p>
-									{address===''? <p onClick={this.geo} className="info_adress">Нажмите, чтобы показать адрес</p> : <p>{address}</p>}
-									<Link to="/edit" className="btn">Редактирование</Link>
-									
+								<div className="col-md-3">
+									<img className="info-photo" src={master.avatar_url} alt="" />
 								</div>
+								<div className="col-md-9">
+									<div className="info">
+										<p className="info_name">{master[0].full_name}</p>
+										<p className="info_phone">{master[0].phone_number}</p>
+										{address===''? <p onClick={this.geo} className="info_adress">Нажмите, чтобы показать адрес</p> : <p>{address}</p>}
+										<Link to="/edit" className="btn">Редактирование</Link>
+									</div>
+								</div>
+								
 							</div>
 						</div>
 					</div>
