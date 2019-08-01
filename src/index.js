@@ -8,7 +8,8 @@ import 'bulma/css/bulma.css';
 import './sass/main.sass'
 
 ReactDOM.render(
-  <BrowserRouter>
+  <BrowserRouter
+    basename="/admin">
     <App />
   </BrowserRouter>,
   document.getElementById('root'));

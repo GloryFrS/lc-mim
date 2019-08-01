@@ -1,14 +1,23 @@
 import React, { Component } from 'react';
 import geo from '../img/country-pointer-geo-location-japan-512.png'
+import * as opencage from 'opencage-api-client';
+
 class GeocodingForm extends Component {
   constructor(props) {
     super(props);
     this.state = {
       isLocating: false,
+      query: '',
+      isSubmitting: false,
+      response: {}
     };
     this.handleGeoLocation = this.handleGeoLocation.bind(this);
     this.handleInputChange = this.handleInputChange.bind(this);
-    this.handleSubmit = props.onSubmit;
+    this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleChange = this.handleChange.bind(this);
+  }
+  componentDidMount() {
+    console.log(this.props.str);
   }
   handleGeoLocation() {
     const geolocation = navigator.geolocation;
@@ -34,28 +43,46 @@ class GeocodingForm extends Component {
       this.setState({
         isLocating: false,
       });
-      this.props.onChange(
+      this.handleChange(
         'query',
         location.coords.latitude + ', ' + location.coords.longitude
       );
     });
   }
+  
+  handleSubmit(event) {
+    event.preventDefault();
+    this.setState({ isSubmitting: true });
+    opencage
+      .geocode({ key: this.props.apikey, q: this.props.str })
+      .then(response => {
+        this.setState({ response, isSubmitting: false });
+        this.props.takeLatLng(this.state.response.results[0].geometry);
+        console.log(this.state.response.results[0].geometry);
+      })
+      .catch(err => {
+        console.error(err);
+        this.setState({ response: {}, isSubmitting: false });
+      });
+  }
   handleInputChange(event) {
     const { target } = event;
     const { name } = target;
-    const value = target.type === 'checkbox' ? target.checked : target.value;
-    // console.log(name, value);
-    // this.setState({
-    //   [name]: value,
-    // });
-    this.props.onChange(name, value);
+    const value = target.type === 'checkbox' ? target.checked : target.value; 
+    
+    this.handleChange(name, value);
   }
-  handleSubmit(event) {
-    console.log('Form was submitted with state: ', this.state);
-    event.preventDefault();
+  handleChange(key, value) {
+    this.setState({ [key]: value });
   }
+  // handleSubmit(event) {
+  //   console.log('Form was submitted with state: ', this.state);
+  //   event.preventDefault();
+  // }
+
+
   render() {
-    const { isSubmitting, query } = this.props;
+    const { isSubmitting, query } = this.state;
     const { isLocating } = this.state;
     return (
       <div className="box form">
@@ -77,8 +104,9 @@ class GeocodingForm extends Component {
                 className="input"
                 type="text"
                 placeholder="Адрес"
-                value={query}
                 onChange={this.handleInputChange}
+                value={query}
+                
               />
               <div className="help">
                 Адрес, название места

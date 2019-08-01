@@ -14,7 +14,7 @@ class Card extends React.Component {
         services: [],
         address: ''
       }
-      this.geo = this.geo.bind(this);
+      
     }
 
     componentDidMount() {
@@ -80,14 +80,16 @@ class Card extends React.Component {
           <img src={notFound} alt=""/>
         </div>
       )} 
-      const { address } = this.state;
+      
+      let addressObj = JSON.parse(master[0].address);
+			const addressStr = addressObj.country.toString() + ' ' + addressObj.city.toString() + ' ' + addressObj.street.toString() + ' ' + addressObj.house.toString();
       return (
           <div>
             <header>
               <img src={master.avatar_url} alt="" />
               <h5>{master[0].full_name}</h5>
-              {address === '' ? <p onClick={this.geo} className="info_adress">Нажмите, чтобы показать адрес</p> : <p>{address}</p>}
-            </header>
+              <p className="info_adress">{ addressStr }</p>
+            </header> 
             <div className="container fix">
               <div className="row">
                 {servicesList}

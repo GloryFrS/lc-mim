@@ -37,8 +37,8 @@ class Login extends React.Component {
 			{headers: {'Content-Type': 'application/json'}})
 		.then(res => {
 			if (res.status === 200) {
-				cookies.set('name', this.state.name);
-				cookies.set('token', res.data.token);
+				cookies.set('name', this.state.name, { path: '/' });
+				cookies.set('token', res.data.token, { path: '/' });
 				this.props.history.push('/profile');
 			} else {
 			const error = new Error(res.error);
@@ -81,7 +81,7 @@ class Login extends React.Component {
 						
 						<input type="submit" className="button" value="Войти" />
 					</form>
-					<a className="login-vk" href="/profile">Войти с помощью ВК</a>
+					{/* <a className="login-vk" href="/profile">Войти с помощью ВК</a> */}
 				</div>
 			</div>	
 		)

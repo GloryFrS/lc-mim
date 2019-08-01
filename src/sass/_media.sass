@@ -31,10 +31,43 @@
 +media-breakpoint-up(xl)
 
 
-@include media-breakpoint-down(sm)
+@include media-breakpoint-down(xs)
   .container 
     padding-top: 50px
     padding-bottom: 50px
+  
+  .login
+    padding: 25px
+    margin: 0 15px
+    h1
+      font-size: 29px
+      line-height: 33px
+  .share
+    a
+      margin-top: 15px
+  .sample 
+    img
+      width: 130px
+      height: 130px
+  #service, #service2
+    margin-bottom: 15px
+  #dynamic_field 
+    p
+      padding: 5px
+      font-size: 14px
+      text-align: center
+@include media-breakpoint-down(md)
+  .info-photo
+    width: 100%
+    height: auto
+  .service
+    font-size: 14px
+    margin-right: 20px
+  .popup-content
+    width: 100%!important
+  .modal-content, .modal-card
+    width: 100% !important
+  
   
 @include media-breakpoint-down(xl)
   .modal-content, .modal-card

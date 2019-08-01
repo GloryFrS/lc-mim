@@ -17,6 +17,7 @@ class ResultMap extends Component {
       map: null,
       layer: null,
       data: props.response.results,
+      latlng: {"lat":45.644768217751924,"lng":56.035517286594649}
     };
     this.mapNode = null;
   }
@@ -36,8 +37,8 @@ class ResultMap extends Component {
     // creates the Leaflet map object
     // it is called after the Map component mounts
     const map = L.map(this.mapNode, {
-      center: [45, 2],
-      zoom: 4,
+      center: [55, 55],
+      zoom: 5,
     });
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -48,12 +49,31 @@ class ResultMap extends Component {
     const layer = L.featureGroup().addTo(map);
 
     const { results } = this.props.response;
-    for (let i = 0; i < results.length; i++) {
-      const marker = L.marker(results[i].geometry, { icon: redIcon });
-      marker.addTo(layer).bindPopup(i + 1 + ' - ' + results[i].formatted);
-    }
+    // for (let i = 0; i < results.length; i++) {
+    //   const marker = L.marker(results[i].geometry, { icon: redIcon });
+    //   marker.addTo(layer).bindPopup(i + 1 + ' - ' + results[i].formatted);
+    // }
+    const marker = L.marker(this.state.latlng,{ icon: redIcon });
+    marker.addTo(map);
 
-    map.fitBounds(layer.getBounds());
+    let newMarker;
+    map.on('click', (e) => {
+      this.setState({ latlng: e.latlng });
+      const { latlng } = this.state;
+      
+      console.log(JSON.stringify(latlng));
+      if (newMarker) { // check
+        map.removeLayer(newMarker); // remove
+        console.log('remove');
+      } else if (marker) {
+        map.removeLayer(marker);
+      }
+      newMarker = L.marker(e.latlng,{ icon: redIcon });
+      newMarker.addTo(map);
+    });
+
+    
+    // map.fitBounds(layer.getBounds());
 
     // set the state
     this.setState({ map, layer });
@@ -63,11 +83,15 @@ class ResultMap extends Component {
     // const results = this.props.response.results || [];
 
     return (
-      <div
-        ref={node => (this.mapNode = node)}
-        id="map"
-        data={this.props.data}
-      />
+      <div>
+        {/* <input type='text' value={this.state.latlng.lat}/>
+        <input type='text' value={this.state.latlng.lng}/> */}
+        <div
+          ref={node => (this.mapNode = node)}
+          id="map"
+          data={this.props.data}
+        />
+      </div>
     );
   }
 }

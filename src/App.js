@@ -12,7 +12,7 @@ import WithAuth from './withAuth';
 import Login from './components/Login';
 import Profile from './components/Profile';
 import EditProfile from './components/EditProfile';
-import Card from './components/Card';
+import Cards from './components/Cards.jsx';
 import {AppContext} from './components/Login';
 import axios from 'axios';
 
@@ -58,7 +58,7 @@ class App extends Component {
     return (
       <div>
         <Navbar color="light" light expand="md">
-          <NavbarBrand href="/">Мастер и Модель</NavbarBrand>
+          <NavbarBrand href="/admin">Мастер и Модель</NavbarBrand>
           <NavbarToggler onClick={this.toggle} />
           <Collapse isOpen={this.state.isOpen} navbar>
             <Nav className="ml-auto" navbar>
@@ -66,7 +66,7 @@ class App extends Component {
                 <Link className='nav-link' to="/login/">Войти</Link>
               </NavItem>
               <NavItem>
-                <Link className='nav-link' to="/profile">Мой профиль</Link>
+                <Link className='nav-link' to="/profile/">Профиль</Link>
               </NavItem>
             </Nav>
           </Collapse>
@@ -78,33 +78,29 @@ class App extends Component {
             )}
           </AppContextConsumer> */}
           
-        
-          <Switch>
-            <Route path="/login" render={(props)=>(
-              <Login {...props}/>
-            )} 
-            /> 
-                  
-            <Route path="/profile" render={(props)=>(
-              <WithAuth {...props}
-                ComponentToProtect={Profile}
-              />
-            )} />
-            <Route path="/edit" render={(props)=>(
-              <WithAuth {...props}
-                ComponentToProtect={EditProfile}
-                customerTypes={this.state.customerTypes}
+         
+            <Switch>
+              <Route path="/login" render={(props)=>(
+                <Login {...props}/>
+              )} 
+              /> 
+                    
+              <Route path="/profile" render={(props)=>(
+                <WithAuth {...props}
+                  ComponentToProtect={Profile}
+                />
+              )} />
+              <Route path="/edit" render={(props)=>(
+                <WithAuth {...props}
+                  ComponentToProtect={EditProfile}
+                  customerTypes={this.state.customerTypes}
 
-              />
-            )} />
-            <Route path="/card/:id" render={(props)=>(
-              <WithAuth {...props}
-                ComponentToProtect={Card}
-              />
-            )} />
-            <Redirect to="/profile"/>
-          </Switch>
-        
+                />
+              )} />
+              <Route path='/card' component={Cards}/>
+
+              <Redirect to="/profile"/>
+            </Switch>
       </div>
     );
   }

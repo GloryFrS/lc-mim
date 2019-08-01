@@ -96,7 +96,9 @@ class Profile extends React.Component {
             data.append(`file${i + 1}`, this.uploadInput.files[i]);
 		}
 		
-		if (this.state.master.portfolio.length < 4) {
+		if (this.state.master.portfolio.length < 5) {
+			// console.log(str.replace(/\s/g, ''));
+			
 			axios.post('http://vk.masterimodel.com/node/masterPortfolio.add', data)
             .then(response => {
                 if (response.data.status === 'ok') {
@@ -141,23 +143,27 @@ class Profile extends React.Component {
 				</Popup>
 				
 			);
+			let addressObj = JSON.parse(master[0].address);
+			const addressStr = addressObj.country.toString() + ' ' + addressObj.city.toString() + ' ' + addressObj.street.toString() + ' ' + addressObj.house.toString();  
 			
 			return (
 				<div className="container">
-					<Alert color="success" isOpen={alertSucces} toggle={this.onDismiss}>"Портфолио обновлено!"</Alert>
-            		<Alert color="danger" isOpen={alertErr} toggle={this.onDismiss}>"Ошибка, нельзя добавить больше 4 фотографий"</Alert>
+					<div style={ alertSucces || alertErr ? {"display": 'block'} : {"display": 'none'} } onClick={this.onDismiss} className="popup-alert">
+						<Alert color="success" onClick={this.onDismiss} isOpen={alertSucces} toggle={this.onDismiss}>"Портфолио обновлено!"</Alert>
+						<Alert color="danger" onClick={this.onDismiss} isOpen={alertErr} toggle={this.onDismiss}>"Ошибка, нельзя добавить больше 5 фотографий"</Alert>
+					</div>
 					<div className="row">
 						<div className="col-12">
 							<h3 className="title">Ваш профиль</h3>
 							<div className="row no-gutters">
-								<div className="col-md-3">
+								<div className="col-lg-3 col-md-4 col-3">
 									<img className="info-photo" src={master.avatar_url} alt="" />
 								</div>
-								<div className="col-md-9">
+								<div className="col-lg-9 col-md-8 col-9">
 									<div className="info">
 										<p className="info_name">{master[0].full_name}</p>
 										<p className="info_phone">{master[0].phone_number}</p>
-										{address===''? <p onClick={this.geo} className="info_adress">Нажмите, чтобы показать адрес</p> : <p>{address}</p>}
+										<p className="info_adress">{ addressStr }</p>
 										<Link to="/edit" className="btn">Редактирование</Link>
 									</div>
 								</div>
@@ -185,11 +191,13 @@ class Profile extends React.Component {
 						</div>
 					</div>
 					<div className="row no-gutters">
-						<VKShareButton title='Мой профиль'
-							description='Мой профиль' image='https://static.tildacdn.com/tild3861-3535-4630-b135-336536613961/center_2.png' url={'http://localhost:3000/card/' + this.state.id}>
-							<button className="btn ">Поделиться профилем</button>	
-						</VKShareButton>
-						
+						<div className='share'>
+							<VKShareButton title='Мой профиль'
+								description='Мой профиль' image='https://static.tildacdn.com/tild3861-3535-4630-b135-336536613961/center_2.png' url={'http://vk.masterimodel.com/card/' + this.state.id}>
+								<button className="btn ">Поделиться профилем</button>	
+							</VKShareButton>
+							<a className="btn see" target="_blank" rel="noopener noreferrer" href={'http://vk.masterimodel.com/admin/card/' + this.state.id}>Посмотреть профиль</a>
+						</div>	
 					</div>
 					<div className="banner">
 						<img src={banner} alt="" />
