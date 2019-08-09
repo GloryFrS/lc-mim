@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
-import L from 'leaflet';
+import L from 'leaflet'; 
 // import Leaflet's CSS
 import 'leaflet/dist/leaflet.css';
 // import './ResultMap.css';
+import 'leaflet-control-geocoder';
 
 const redIcon = L.icon({
   iconUrl: 'marker-icon-red.png',
@@ -17,7 +18,7 @@ class ResultMap extends Component {
       map: null,
       layer: null,
       data: props.response.results,
-      latlng: {"lat":45.644768217751924,"lng":56.035517286594649}
+      latlng: {"lat":props.lat,"lng":props.lng}
     };
     this.mapNode = null;
   }
@@ -37,8 +38,8 @@ class ResultMap extends Component {
     // creates the Leaflet map object
     // it is called after the Map component mounts
     const map = L.map(this.mapNode, {
-      center: [55, 55],
-      zoom: 5,
+      center: [this.props.lat, this.props.lng],
+      zoom: 15,
     });
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -47,12 +48,21 @@ class ResultMap extends Component {
     }).addTo(map);
 
     const layer = L.featureGroup().addTo(map);
+    
+    if (Object.keys(this.props.response).length !== 0) {
+      const { results } = this.props.response;
+    
+      for (let i = 0; i < results.length; i++) {
+        const marker = L.marker(results[i].geometry, { icon: redIcon });
+        marker.addTo(layer).bindPopup(i + 1 + ' - ' + results[i].formatted);
+      }
+    }
 
-    const { results } = this.props.response;
-    // for (let i = 0; i < results.length; i++) {
-    //   const marker = L.marker(results[i].geometry, { icon: redIcon });
-    //   marker.addTo(layer).bindPopup(i + 1 + ' - ' + results[i].formatted);
-    // }
+    L.Control.geocoder({
+      geocoder: L.Control.Geocoder.nominatim()
+    }).addTo(map);
+    
+    
     const marker = L.marker(this.state.latlng,{ icon: redIcon });
     marker.addTo(map);
 

@@ -170,7 +170,9 @@ b, strong
 	margin-right: 20px
 	margin-bottom: 18px
 	display: flex
-	justify-content: space-between	
+	justify-content: space-between
+	min-height: 94px
+    align-items: center
 	span
 		text-align: right
 		color: $color
@@ -216,9 +218,9 @@ input[type="file"]
 	.form-control
 		border: 1px solid #DBDBDB
 		box-sizing: border-box
-		border-radius: 43px
+		border-radius: 30px
 		width: 100%
-		padding: 20px 35px
+		// padding: 20px 35px
 .btn-block
 	flex-basis: 65%
 	.btn
@@ -233,11 +235,18 @@ input[type="file"]
 	text-align: center
 	color: $color
 	height: 30px
+	background: none
+	border: 0
 
 .fix-label
 	display: block
 	width: 100%
 	padding: 0 15px
+	span 
+		cursor: pointer
+		text-decoration: underline
+		color: #f598a7
+		font-size: 14px
 #add, .del
 	display: flex
 	background: $color
@@ -337,7 +346,7 @@ input[type="file"]
 .alert-danger
 	left: calc(50% - 237px)
 #map
-	height: 250px
+	height: 400px
 .modal 
 	z-index: 9999!important
 .geoButton
@@ -352,6 +361,18 @@ input[type="file"]
 	left: 0
 .leaflet-container
     height: 500px
+.modal-body
+	label
+		margin-top: 0 
+.masters_portfolio
+	position: relative
+.fa-times-circle 
+	position: absolute
+	right: 5px
+	top: -10px
+	cursor: pointer
+.see
+	margin-left: 15px
 
 
 @import "media" // Always at the end

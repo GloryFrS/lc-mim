@@ -26,14 +26,14 @@ class Card extends React.Component {
               {headers: {'Content-Type': 'application/x-www-form-urlencoded', 'PARAM_HEADER': "eyJ0eXAiOiJKV1QiLC"}})
               .then(res => {
           this.setState({master: res.data, loader: true});
-          console.log(this.state.master);
+          // console.log(this.state.master);
           })
       axios.post(
         'http://vk.masterimodel.com/node/masterServices.get', params,
         {headers: {'Content-Type': 'application/x-www-form-urlencoded', 'PARAM_HEADER': "eyJ0eXAiOiJKV1QiLC"}})
         .then(res => {
           this.setState({services: res.data, loader2:true});
-          console.log(this.state.service);
+          // console.log(this.state.service);
           })
       
       

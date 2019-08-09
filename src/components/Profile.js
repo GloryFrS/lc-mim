@@ -8,6 +8,10 @@ import {Link} from 'react-router-dom';
 import Cookies from 'universal-cookie';
 import { VKShareButton } from 'react-share';
 import { Alert } from 'reactstrap';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faTimesCircle } from '@fortawesome/free-solid-svg-icons'
+
+
 
 const cookies = new Cookies();
 
@@ -18,6 +22,7 @@ class Profile extends React.Component {
 		super(props);
 		this.state = {
 			master: null,
+			portfolio: [],
 			loader: false,
 			address: '',
 			services: [],
@@ -31,6 +36,7 @@ class Profile extends React.Component {
 		this.geo = this.geo.bind(this);
 		this.handleUploadImage = this.handleUploadImage.bind(this);
 		this.onDismiss = this.onDismiss.bind(this);
+		this.deletePortfolio = this.deletePortfolio.bind(this);
 	}
 	componentDidMount() {
 		const params = new URLSearchParams();
@@ -40,7 +46,7 @@ class Profile extends React.Component {
             'http://vk.masterimodel.com/node/masters.get', params,
             {headers: {'Content-Type': 'application/x-www-form-urlencoded', 'PARAM_HEADER': "eyJ0eXAiOiJKV1QiLC"}})
             .then(res => {
-				this.setState({master: res.data, loader: true});
+				this.setState({master: res.data, portfolio: res.data.portfolio, loader: true});
 			  })
 		axios.post(
 			'http://vk.masterimodel.com/node/masterServices.get', params,
@@ -91,10 +97,10 @@ class Profile extends React.Component {
 
         data.append('id', this.state.id);  //this.uploadInput.files[0]);
         data.append('api_key',  this.state.api); //this.uploadInput.files[0]);
-
         for (let i = 0; i < this.uploadInput.files.length; i++) {
             data.append(`file${i + 1}`, this.uploadInput.files[i]);
 		}
+		
 		
 		if (this.state.master.portfolio.length < 5) {
 			// console.log(str.replace(/\s/g, ''));
@@ -102,8 +108,8 @@ class Profile extends React.Component {
 			axios.post('http://vk.masterimodel.com/node/masterPortfolio.add', data)
             .then(response => {
                 if (response.data.status === 'ok') {
-					this.setState({alertSucces: true});
 					document.location.reload();
+					console.log(response)
 					
                 } else {
 					this.setState({alertErr: true});
@@ -122,11 +128,42 @@ class Profile extends React.Component {
 	onDismiss() {
 		this.setState({ alertSucces: false, alertErr: false });
 	  }
+	
+	deletePortfolio(e, photo, i) {
+		e.preventDefault();
+		const data2 = {
+			'id': this.state.id,  
+			'api_key':  this.state.api,
+			'filename':  photo.split('/')[7]
+		};
+
+		axios.post('http://vk.masterimodel.com/node/masterPortfolio.deleteOnce', data2)
+            .then(response => {
+                if (response.data === "portfolio item has been deleted") {
+					let arr = [...this.state.portfolio]; 
+					if (i !== -1) {
+						arr.splice(i, 1);
+						this.setState({portfolio: arr});
+					}
+					console.log(response)
+					
+                } else {
+					this.setState({alertErr: true});
+					console.log(response)
+                }
+
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+		
+		
+	}	  
 
 	render() {
 		
 		if (this.state.loader && this.state.loader2) {
-			const {master, services, address, alertErr, alertSucces} = this.state;
+			const {master, portfolio, services, alertErr, alertSucces} = this.state;
 			const about = decodeURI(master[0].about_master);
 			const servicesList = services.map((service, index) =>
 				<div key={index} className=" col-12 col-md-6">
@@ -136,11 +173,13 @@ class Profile extends React.Component {
 					</div>
 				</div>
 			);
-			const portfolio = master.portfolio.map((photo, index) =>
-				<Popup key={index} trigger={<img src={photo} alt="" />}  modal
-				closeOnDocumentClick>
-					<img className='origin_Photo' src={photo} alt="" />
-				</Popup>
+			const portfolioList = portfolio.map((photo, index) =>
+				<div className='masters_portfolio' key={index}>
+					<FontAwesomeIcon icon={faTimesCircle} onClick={(e) => this.deletePortfolio(e,photo,index)} size="lg" color='red'/>
+					<Popup  trigger={<img src={photo} alt="" />} modal closeOnDocumentClick>
+						<img className='origin_Photo' src={photo} alt="" />
+					</Popup>
+				</div>
 				
 			);
 			let addressObj = JSON.parse(master[0].address);
@@ -182,7 +221,7 @@ class Profile extends React.Component {
 					<div className="row no-gutters">
 						<h3 className="title mt-5">Примеры работ</h3>
 						<div className="sample">				
-							{portfolio}
+							{portfolioList}
 							<form onSubmit={this.handleUploadImage}>
 								<label className="sample-file-upload">
 									<input onChange={this.handleUploadImage} ref={(ref) => { this.uploadInput = ref; }} type="file" multiple />
@@ -196,7 +235,7 @@ class Profile extends React.Component {
 								description='Мой профиль' image='https://static.tildacdn.com/tild3861-3535-4630-b135-336536613961/center_2.png' url={'http://vk.masterimodel.com/card/' + this.state.id}>
 								<button className="btn ">Поделиться профилем</button>	
 							</VKShareButton>
-							<a className="btn see" target="_blank" rel="noopener noreferrer" href={'http://vk.masterimodel.com/admin/card/' + this.state.id}>Посмотреть профиль</a>
+							<a className="btn see" target="_blank" rel="noopener noreferrer" href={'http://vk.masterimodel.com/card/' + this.state.id}>Посмотреть профиль</a>
 						</div>	
 					</div>
 					<div className="banner">

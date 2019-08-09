@@ -60,8 +60,9 @@ class Login extends React.Component {
 		
 		return (
 			<div className='body-login d-flex'>
-				<Alert color="danger" isOpen={this.state.alertErr} toggle={this.onDismiss}>"Неверно введен логин или пароль"</Alert>
-				
+				<div style={ this.state.alertErr ? {"display": 'block'} : {"display": 'none'} } onClick={this.onDismiss} className="popup-alert">
+					<Alert color="danger" isOpen={this.state.alertErr} toggle={this.onDismiss}>"Неверно введен логин или пароль"</Alert>
+				</div>
 				<div className='login'>
 					<h1>Вход <br/> в личный кабинет</h1>
 					<form onSubmit={this.onSubmit}>

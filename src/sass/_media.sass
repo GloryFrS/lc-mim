@@ -30,7 +30,13 @@
 // ≤1200px
 +media-breakpoint-up(xl)
 
-
+@include media-breakpoint-down(xl)
+  .modal-content, .modal-card
+    max-height: calc(100vh)!important
+    width: 800px
+  .modal-dialog 
+    max-width: 800px!important
+    margin: 1.75rem auto
 @include media-breakpoint-down(xs)
   .container 
     padding-top: 50px
@@ -57,6 +63,7 @@
       font-size: 14px
       text-align: center
 @include media-breakpoint-down(md)
+
   .info-photo
     width: 100%
     height: auto
@@ -65,15 +72,11 @@
     margin-right: 20px
   .popup-content
     width: 100%!important
+
+@include media-breakpoint-down(sm)
   .modal-content, .modal-card
-    width: 100% !important
+    margin: 0
+    width: 100%
   
-  
-@include media-breakpoint-down(xl)
-  .modal-content, .modal-card
-    max-height: calc(100vh)!important
-    width: 800px!important
-  .modal-dialog 
-    max-width: 800px!important
-    margin: 1.75rem auto
+
   

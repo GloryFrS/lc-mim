@@ -3,12 +3,11 @@ import axios from 'axios';
 import Cookies from 'universal-cookie';
 import { Alert } from 'reactstrap';
 import loading from '../img/loading.gif';
-import GeocodingForm from './GeocodingForm';
-import GeocodingResults from './GeocodingResults';
-import { Button, Modal, ModalHeader, ModalBody} from 'reactstrap';
+import { Button, Modal, ModalHeader, ModalBody, ModalFooter} from 'reactstrap';
 import InputMask from 'react-input-mask';
-import * as opencage from 'opencage-api-client';
-// import Map2 from './Map';
+import ResultMap2 from './Map';
+import L from 'leaflet'; 
+
 
 const cookies = new Cookies();
 
@@ -29,13 +28,13 @@ class EditProfile extends React.Component {
       isLocating: false,
       isSubmitting: false,
       response: {}
-    }
+        }
     this.handleInputChange = this.handleInputChange.bind(this);
     this.handleOnSubmit = this.handleOnSubmit.bind(this);
     this.onDismiss = this.onDismiss.bind(this);
     this.setNewService = this.setNewService.bind(this);
     this.deleteSetvice = this.deleteSetvice.bind(this);
-    this.handleSubmitGeo = this.handleSubmitGeo.bind(this);
+    this.onSub = this.onSub.bind(this);
     
 
     
@@ -43,6 +42,7 @@ class EditProfile extends React.Component {
   }
 
   componentDidMount() {
+    
 
 		const params = new URLSearchParams();
 		params.append('id', this.state.id);
@@ -118,52 +118,40 @@ class EditProfile extends React.Component {
   handleOnSubmit = (e) => {
     e.preventDefault();
     const { name,phone,lat,lng,vk,about, country, city, street, house }  = this.state;
-    const str = country + ' ' + city + ' ' + street + ' ' + house;
-    opencage
-      .geocode({ key: this.state.apiG, q: str })
-      .then(response => {
-        this.setState({ response, isSubmitting: false })
-        const latLng = this.state.response.results[0].geometry;
-        this.setState({ lat: latLng.lat, lng: latLng.lng });
-        const params = new URLSearchParams();
-        params.append('id',             vk);
-        params.append('full_name',      name);
-        params.append('phone_number',   phone);
-        params.append('about_master',   about);
-        params.append('coordinates',     JSON.stringify({
-          'lat': lat,
-          'lng': lng
-        }));
-        params.append('address',     JSON.stringify({
-          'country': country,
-          'city': city,
-          'street': street,
-          'house': house
-        }));
-        params.append('is_approved',    false);
-        params.append('is_immediately', false);
-        params.append('reviews_number', "0");
-        params.append('api_key',        this.state.api);
+    const params = new URLSearchParams();
+    params.append('id',             vk);
+    params.append('full_name',      name);
+    params.append('phone_number',   phone);
+    params.append('about_master',   about);
+    params.append('coordinates',     JSON.stringify({
+      'lat': lat,
+      'lng': lng
+    }));
+    params.append('address',     JSON.stringify({
+      'country': country,
+      'city': city,
+      'street': street,
+      'house': house
+    }));
+    params.append('is_approved',    false);
+    params.append('is_immediately', false);
+    params.append('reviews_number', "0");
+    params.append('api_key',        this.state.api);
 
 
-        axios.post(
-          'http://vk.masterimodel.com/node/masters.edit', params,
-          {headers: {'Content-Type': 'application/x-www-form-urlencoded', 'PARAM_HEADER': "eyJ0eXAiOiJKV1QiLC"}})
+    axios.post(
+      'http://vk.masterimodel.com/node/masters.edit', params,
+      {headers: {'Content-Type': 'application/x-www-form-urlencoded', 'PARAM_HEADER': "eyJ0eXAiOiJKV1QiLC"}})
 
-          .then(res =>{
-            if (res.data.status === "ok") {
-              this.setState({alert: true});
-            }
-          })
-          .catch(function (error) {
-              console.log(error);
-          });
-        })
-      .catch(err => {
-        console.error(err);
-        this.setState({ response: {}, isSubmitting: false });
+      .then(res =>{
+        if (res.data.status === "ok") {
+          this.setState({alert: true});
+        }
+      })
+      .catch(function (error) {
+          console.log(error);
       });
-    
+  
       
     
     
@@ -265,26 +253,24 @@ class EditProfile extends React.Component {
 
   
 
-  handleSubmitGeo(event) {
-    event.preventDefault();
-    this.setState({ isSubmitting: true });
+  
+
+  onSub (e) {
+    e.preventDefault();
     const { country, city , street, house } = this.state;
-    const str = country + ' ' + city + ' ' + street + ' ' + house;
-    opencage
-      .geocode({ key: this.state.apiG, q: str })
-      .then(response => {
-        this.setState({ response, isSubmitting: false });
-        const latLng = this.state.response.results[0].geometry;
-        this.setState({lat: latLng.lat, lng: latLng.lng}) 
-        console.log(this.state.lat)
-      })
-      .catch(err => {
-        console.error(err);
-        this.setState({ response: {}, isSubmitting: false });
-      });
+    const str = country + ',' + city + ',' + street + ',' + house;
+    const geocoder = L.Control.Geocoder.mapbox('pk.eyJ1IjoiZ2xvcnlmcnMiLCJhIjoiY2p5eHZtdm05MWJjaDNtcnJxY3UwdnYwOCJ9.VhGilGU54k8Voi0pIaVggQ');
+    const self = this;
+    geocoder.geocode(str, function(results) {
+      self.setState({lat: results[0].center.lat, lng: results[0].center.lng, modal: false});
+      console.log(results);
+    })
+    
   }
-   
+  
+  
   render() {
+    
     const { name,phone,vk,about,alert,alertErr,loader,price,services, country, city, street, house } = this.state;
     const listServices = services.map((service, index) =>
       <div key={index} className="d-flex" style={{"alignItems": "center"}}>
@@ -340,28 +326,12 @@ class EditProfile extends React.Component {
                     </div>
                 </div>
                 <div className="row">
-                    <label className="fix-label">Адрес</label>
-                    <div className="form-group col-6 col-md-3">
-                        <input name="country" type="text" onChange={this.handleInputChange} className="form-control" value={country} placeholder="Страна"/>
+                    <label className="fix-label">Адрес <span onClick={this.toggle}>изменить адрес</span></label>
+                    <div className="col-12">
+                      <p>{country + ', ' + city + ', ' + street + ', ' + house}</p>
                     </div>
-                    <div className="form-group col-6 col-md-3">                            
-                        <input name="city" type="text" onChange={this.handleInputChange} className="form-control"  value={city} placeholder="Город"/>
-                    </div>
-                    <div className="form-group col-6 col-md-3">                            
-                        <input name="street" type="text" onChange={this.handleInputChange}  className="form-control" value={street} placeholder="Улица"/>
-                    </div>
-                    <div className="form-group col-6 col-md-3">                            
-                        <input name="house" type="text" onChange={this.handleInputChange} className="form-control" value={house} placeholder="Дом"/>
-                    </div>
-                    <div className="form-group col-md-2">
+  
                     
-                      {/* <Button color="danger"  className='geoButton' onClick={this.handleSubmitGeo}>Подтвердить адрес</Button> */}
-                      {/* <Button color="danger" onChange={this.handleInputChange} className='geoButton' onClick={this.toggle}>Показать на карте</Button> */}
-                      {/* <input name="lat" onChange={this.handleInputChange} type="text" className="form-control" value={lat} placeholder="Широта" /> */}
-                    </div>
-                    <div className="form-group col-md-4">
-                      {/* <input name="lng" onChange={this.handleInputChange} type="text" className="form-control" value={lng} placeholder="Долгота" /> */}
-                    </div>
                 </div>
                 <div className="row">
                     <div className="form-group col-md-6">
@@ -411,21 +381,35 @@ class EditProfile extends React.Component {
                 </div>
               </form>
           
-              <Modal isOpen={this.state.modal} toggle={this.toggle} className={this.props.className} backdrop={this.state.backdrop}>
-                <ModalHeader toggle={this.toggle}>Введите адрес или координаты</ModalHeader>
+              <Modal isOpen={this.state.modal} style={{'width': '100%'}} toggle={this.toggle} className={this.props.className} backdrop={this.state.backdrop}>
+                <ModalHeader toggle={this.toggle}>Введите адрес</ModalHeader>
                 <ModalBody> 
-                  <div className="columns">
-                    <div className="column is-one-third-desktop">
-                      <GeocodingForm
-                        apikey = {this.state.apiG}
-                        str = { country + ' ' + city + ' ' + street + ' ' + house }
-                      />
+                  <div className='row edit-profile'>
+                    <div className="form-group col-12 col-md-3">
+                        <label >Страна</label>
+                        <input name="country" type="text" onChange={this.handleInputChange} className="form-control" value={country} placeholder="Страна"/>
                     </div>
-                    <div className="column">
-                      <GeocodingResults response={this.state.response} />
+                    <div className="form-group col-12 col-md-4">                            
+                        <label >Город(область)</label>
+                        <input name="city" type="text" onChange={this.handleInputChange} className="form-control"  value={city} placeholder="Город"/>
                     </div>
+                    <div className="form-group col-12 col-md-3">
+                        <label >Улица</label>                            
+                        <input name="street" type="text" onChange={this.handleInputChange}  className="form-control" value={street} placeholder="Улица"/>
+                    </div>
+                    <div className="form-group col-12 col-md-2">
+                        <label>Дом</label>                            
+                        <input name="house" type="text" onChange={this.handleInputChange} className="form-control" value={house} placeholder="Дом"/>
+                    </div>
+                    
                   </div>
+                {/* <ResultMap2 lat={lat} lng={lng}/> */}
+                    
                 </ModalBody>
+                <ModalFooter>
+                  <Button color="danger"  onClick={this.onSub}>Подтвердить</Button>{' '}
+                  <input type='button'  className='btn-cancel' onClick={this.toggle} value='Отмена'/>
+                </ModalFooter>
               </Modal>
             </div>
           </div>

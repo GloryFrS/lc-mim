@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import geo from '../img/country-pointer-geo-location-japan-512.png'
 import * as opencage from 'opencage-api-client';
+import ResultMap from './ResultMap';
 
 class GeocodingForm extends Component {
   constructor(props) {
@@ -9,7 +10,9 @@ class GeocodingForm extends Component {
       isLocating: false,
       query: '',
       isSubmitting: false,
-      response: {}
+      response: {},
+      lat: props.lat,
+      lng: props.lng 
     };
     this.handleGeoLocation = this.handleGeoLocation.bind(this);
     this.handleInputChange = this.handleInputChange.bind(this);
@@ -41,7 +44,7 @@ class GeocodingForm extends Component {
     });
     p.then(location => {
       this.setState({
-        isLocating: false,
+        isLocating: false, lat: location.coords.latitude, lng: location.coords.longitude
       });
       this.handleChange(
         'query',
@@ -54,11 +57,10 @@ class GeocodingForm extends Component {
     event.preventDefault();
     this.setState({ isSubmitting: true });
     opencage
-      .geocode({ key: this.props.apikey, q: this.props.str })
+      .geocode({ key: this.props.apikey, q: this.state.query })
       .then(response => {
         this.setState({ response, isSubmitting: false });
-        this.props.takeLatLng(this.state.response.results[0].geometry);
-        console.log(this.state.response.results[0].geometry);
+        console.log(this.state.response.results);
       })
       .catch(err => {
         console.error(err);
@@ -94,7 +96,7 @@ class GeocodingForm extends Component {
           
           {/* <!-- Query --> */}
           <div className="field">
-            <label className="label">Адрес или координаты</label>
+            <label className="label">Адрес</label>
             <div className="control has-icons-left">
               <span className="icon is-small is-left">
                 <i className="fas fa-map-marked-alt" />
@@ -110,9 +112,6 @@ class GeocodingForm extends Component {
               />
               <div className="help">
                 Адрес, название места
-                <br />
-                Координаты в виде широты, долготы <code>широты, долготы</code> или{' '}
-                <code>y, x</code>.
               </div>
             </div>
           </div>
@@ -142,10 +141,11 @@ class GeocodingForm extends Component {
             onClick={this.handleSubmit}
             disabled={isLocating || isSubmitting}
           >
-            Получить координаты
+            Показать на карте
           </button>
           {/* <!-- ./Button Geocode --> */}
         </form>
+        <ResultMap lat={this.state.lat} lng={this.state.lng} response={this.state.response} />
       </div>
     );
   }

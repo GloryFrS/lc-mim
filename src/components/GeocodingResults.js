@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import classnames from 'classnames';
-
+import GeocodingForm from './GeocodingForm';
 import ResultList from './ResultList';
 import ResultMap from './ResultMap';
 
@@ -43,6 +43,7 @@ class GeocodingResults extends Component {
 
     return (
       <div className="box results">
+        <GeocodingForm/>
         <div className="tabs is-boxed vh">
           <ul>
             {this.renderTab(
@@ -60,7 +61,8 @@ class GeocodingResults extends Component {
         
         {/* MAP result */}
         {activeTab === MAP_TAB &&
-          results.length > 0 && <ResultMap response={this.state.response} />}
+          results.length > 0 && 
+            <ResultMap lat={this.props.lat} lng={this.props.lng} response={this.state.response} />}  
       </div>
     );
   }
