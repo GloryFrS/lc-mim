@@ -1,5 +1,5 @@
 import React from 'react';
-import axios from 'axios';
+import api from '../API/api';
 import loading from '../img/loading.gif';
 import notFound from '../img/404error.jpeg';
 
@@ -21,43 +21,17 @@ class Card extends React.Component {
       const params = new URLSearchParams();
       params.append('id', this.state.id);
 
-      axios.post(
-              'http://vk.masterimodel.com/node/masters.get', params,
-              {headers: {'Content-Type': 'application/x-www-form-urlencoded', 'PARAM_HEADER': "eyJ0eXAiOiJKV1QiLC"}})
-              .then(res => {
+      api.mastersGet(params)
+        .then(res => {
           this.setState({master: res.data, loader: true});
           // console.log(this.state.master);
-          })
-      axios.post(
-        'http://vk.masterimodel.com/node/masterServices.get', params,
-        {headers: {'Content-Type': 'application/x-www-form-urlencoded', 'PARAM_HEADER': "eyJ0eXAiOiJKV1QiLC"}})
+        })
+      api.masterServices(params)
         .then(res => {
           this.setState({services: res.data, loader2:true});
-          // console.log(this.state.service);
-          })
-      
-      
+        })
     }
-    geo = (e) => {
-      e.preventDefault();
-      let obj = this.state.master[0].coordinates;
-      let coor = JSON.parse(obj);
-      axios.get('https://api.opencagedata.com/geocode/v1/json', {
-        params: {
-          q: coor.lat.toString() + ',' + coor.lng.toString(), //"41.40139,2.12870"
-          key: "fb0d5699bd8145b68ec866138df4a623",
-          language: "ru",
-          pretty: 1
-  
-        }
-      })
-      .then((res) => {
-        this.setState({address: res.data.results[0].formatted})
-      })
-      .catch(function (err) {
-        console.log(err);
-      })  
-    }
+    
 
     render() {
       const {master, services, loader, id} = this.state;

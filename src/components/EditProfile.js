@@ -1,11 +1,10 @@
 import React from 'react';
-import axios from 'axios';
+import api from '../API/api';
 import Cookies from 'universal-cookie';
 import { Alert } from 'reactstrap';
 import loading from '../img/loading.gif';
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter} from 'reactstrap';
 import InputMask from 'react-input-mask';
-import ResultMap2 from './Map';
 import L from 'leaflet'; 
 
 
@@ -42,46 +41,39 @@ class EditProfile extends React.Component {
   }
 
   componentDidMount() {
-    
-
 		const params = new URLSearchParams();
 		params.append('id', this.state.id);
 
-		axios.post(
-        'http://vk.masterimodel.com/node/masters.get', params,
-        {headers: {'Content-Type': 'application/x-www-form-urlencoded', 'PARAM_HEADER': "eyJ0eXAiOiJKV1QiLC"}})
-        .then(res => {
-          this.setState({
-            name: res.data[0].full_name,
-            phone: res.data[0].phone_number,
-            lat: JSON.parse(res.data[0].coordinates).lat.toString(),
-            lng: JSON.parse(res.data[0].coordinates).lng.toString(),
-            country: JSON.parse(res.data[0].address).country.toString(),
-            city: JSON.parse(res.data[0].address).city.toString(),
-            street: JSON.parse(res.data[0].address).street.toString(),
-            house: JSON.parse(res.data[0].address).house.toString(),
-            vk: res.data[0].vk_id,
-            about: decodeURI(res.data[0].about_master),
-            loader: true,
-            select: ''
-          });
-        })
-        axios.post(
-          'http://vk.masterimodel.com/node/masterServices.get', params,
-          {headers: {'Content-Type': 'application/x-www-form-urlencoded', 'PARAM_HEADER': "eyJ0eXAiOiJKV1QiLC"}})
-          .then(res => {
-            this.setState({services: res.data});
-          })
-        const cook = {
-          "token": cookies.get('token')
-        };
-        axios.post('http://vk.masterimodel.com:3004/sssh', cook)
-          .then(res => {
-            this.setState({
-              api: res.data.api,
-              apiG: res.data.apiG
-            });
-          })
+		api.mastersGet(params)
+      .then(res => {
+        this.setState({
+          name: res.data[0].full_name,
+          phone: res.data[0].phone_number,
+          lat: JSON.parse(res.data[0].coordinates).lat.toString(),
+          lng: JSON.parse(res.data[0].coordinates).lng.toString(),
+          country: JSON.parse(res.data[0].address).country.toString(),
+          city: JSON.parse(res.data[0].address).city.toString(),
+          street: JSON.parse(res.data[0].address).street.toString(),
+          house: JSON.parse(res.data[0].address).house.toString(),
+          vk: res.data[0].vk_id,
+          about: decodeURI(res.data[0].about_master),
+          loader: true,
+          select: ''
+        });
+      })
+
+    api.masterServices(params)
+      .then(res => {
+        this.setState({services: res.data});
+      })
+    const cook = { "token": cookies.get('token') };
+    api.sssh(cook)
+      .then(res => {
+        this.setState({
+          api: res.data.api,
+          apiG: res.data.apiG
+        });
+      })
   }
   toggle() {
     this.setState(prevState => ({
@@ -100,18 +92,16 @@ class EditProfile extends React.Component {
     const params = new URLSearchParams();
     
     if (target.id === 'service')
-      params.append('customer_type_id', target.value);  
-      axios.post(
-          'http://vk.masterimodel.com/node/customerServices.get', params,
-          {headers: {'Content-Type': 'application/x-www-form-urlencoded', 'PARAM_HEADER': "eyJ0eXAiOiJKV1QiLC"}})
-          .then(res => {
-            if (res.data.hasOwnProperty('customer_services')) {
-                this.setState({servicesTemp: res.data});
-            }
-          })
-          .catch(err => {
-              console.log(err);
-          });
+      params.append('customer_type_id', target.value);
+      api.customerServices(params)  
+        .then(res => {
+          if (res.data.hasOwnProperty('customer_services')) {
+              this.setState({servicesTemp: res.data});
+          }
+        })
+        .catch(err => {
+            console.log(err);
+        });
     
   }
 
@@ -139,10 +129,7 @@ class EditProfile extends React.Component {
     params.append('api_key',        this.state.api);
 
 
-    axios.post(
-      'http://vk.masterimodel.com/node/masters.edit', params,
-      {headers: {'Content-Type': 'application/x-www-form-urlencoded', 'PARAM_HEADER': "eyJ0eXAiOiJKV1QiLC"}})
-
+    api.mastersEdit(params)
       .then(res =>{
         if (res.data.status === "ok") {
           this.setState({alert: true});
@@ -151,11 +138,6 @@ class EditProfile extends React.Component {
       .catch(function (error) {
           console.log(error);
       });
-  
-      
-    
-    
-
   }
   onDismiss() {
     this.setState({ alert: false, alertErr: false });
@@ -195,10 +177,8 @@ class EditProfile extends React.Component {
       params.append('price',   price); 
       params.append('api_key',        this.state.api);
 
-      axios.post(
-        'http://vk.masterimodel.com/node/masterServices.add', params,
-        {headers: {'Content-Type': 'application/x-www-form-urlencoded', 'PARAM_HEADER': "eyJ0eXAiOiJKV1QiLC"}})
-  
+      
+      api.masterServicesAdd(params)
         .then(res =>{
           if (res.data.status === "ok") {
             // this.setState({alert: true});
@@ -229,13 +209,8 @@ class EditProfile extends React.Component {
     params.append('customer_services_id',   id_service); 
     params.append('api_key',        this.state.api);
     
-    axios.post(
-    'http://vk.masterimodel.com/node/masterServices.delete', params,
-    {headers: {'Content-Type': 'application/x-www-form-urlencoded', 'PARAM_HEADER': "eyJ0eXAiOiJKV1QiLC"}})
-
+    api.masterServicesDelete(params)
     .then(response => {
-
-
         if (response.data.hasOwnProperty('status') && response.data.status === 'ok') {
             this.setState({ alert: true });
             let arr = [...this.state.services]; 
@@ -271,7 +246,7 @@ class EditProfile extends React.Component {
   
   render() {
     
-    const { name,phone,vk,about,alert,alertErr,loader,price,services, country, city, street, house } = this.state;
+    const { name, phone, about, alert, alertErr, loader, price, services, country, city, street, house } = this.state;
     const listServices = services.map((service, index) =>
       <div key={index} className="d-flex" style={{"alignItems": "center"}}>
         <p>{service.customer_services_label} / {service.customer_types_label}</p>
@@ -333,12 +308,7 @@ class EditProfile extends React.Component {
   
                     
                 </div>
-                <div className="row">
-                    <div className="form-group col-md-6">
-                    <label>Ваш VK id</label>
-                    <input name="vk" onChange={this.handleInputChange} type="text" id="name-input" className="form-control" value={vk} placeholder="https://vk.com/idxxxxxxx" />
-                    </div>
-                </div>
+                
                 <div className="row">
                     <div className="form-group col-md-12">
                     <label>О себе</label>

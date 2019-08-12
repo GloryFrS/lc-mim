@@ -14,7 +14,7 @@ import Profile from './components/Profile';
 import EditProfile from './components/EditProfile';
 import Cards from './components/Cards.jsx';
 import {AppContext} from './components/Login';
-import axios from 'axios';
+import api from './API/api';
 
 
 const AppContextConsumer = AppContext.Consumer;
@@ -36,10 +36,9 @@ class App extends Component {
  
 
   componentDidMount(){
-    axios.get('http://vk.masterimodel.com/node/customerTypes.get')
+    api.customerTypes()
         .then(res=>{
             if (Array.isArray(res.data)) {
-                // console.log("response:", response.data);
                 this.setState({customerTypes: res.data})
             }
         })

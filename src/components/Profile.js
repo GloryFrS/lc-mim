@@ -1,9 +1,8 @@
 import React from 'react';
 import banner from '../img/banner.png';
 import Popup from "reactjs-popup";
-import loading from '../img/loading.gif'
-// import Geocode from "react-geocode";
-import axios from 'axios';
+import loading from '../img/loading.gif';
+import api from '../API/api';
 import {Link} from 'react-router-dom';
 import Cookies from 'universal-cookie';
 import { VKShareButton } from 'react-share';
@@ -33,7 +32,6 @@ class Profile extends React.Component {
 			api: '',
 			apiG: ''
 		};
-		this.geo = this.geo.bind(this);
 		this.handleUploadImage = this.handleUploadImage.bind(this);
 		this.onDismiss = this.onDismiss.bind(this);
 		this.deletePortfolio = this.deletePortfolio.bind(this);
@@ -42,15 +40,11 @@ class Profile extends React.Component {
 		const params = new URLSearchParams();
 		params.append('id', this.state.id);
 
-		axios.post(
-            'http://vk.masterimodel.com/node/masters.get', params,
-            {headers: {'Content-Type': 'application/x-www-form-urlencoded', 'PARAM_HEADER': "eyJ0eXAiOiJKV1QiLC"}})
-            .then(res => {
-				this.setState({master: res.data, portfolio: res.data.portfolio, loader: true});
-			  })
-		axios.post(
-			'http://vk.masterimodel.com/node/masterServices.get', params,
-			{headers: {'Content-Type': 'application/x-www-form-urlencoded', 'PARAM_HEADER': "eyJ0eXAiOiJKV1QiLC"}})
+		api.mastersGet(params)
+		 .then(res => {
+			this.setState({master: res.data, portfolio: res.data.portfolio, loader: true});
+		 })
+		api.masterServices(params)
 			.then(res => {
 				this.setState({services: res.data, loader2:true});
 			})
@@ -59,7 +53,7 @@ class Profile extends React.Component {
 			"token": cookies.get('token')
 		};
 		
-		axios.post('http://vk.masterimodel.com:3004/sssh', cook)
+		api.sssh(cook)
 			.then(res => {
 				this.setState({
 					api: res.data.api,
@@ -68,28 +62,6 @@ class Profile extends React.Component {
 			})
 	}
 
-	geo = (e) => {
-		e.preventDefault();
-		let obj = this.state.master[0].coordinates;
-		let coor = JSON.parse(obj);
-		axios.get('https://api.opencagedata.com/geocode/v1/json', {
-			params: {
-			q: coor.lat.toString() + ',' + coor.lng.toString(), //"41.40139,2.12870"
-			key: this.state.apiG,
-			language: "ru",
-			pretty: 1
-
-			}
-		})
-		.then((res) => {
-			this.setState({address: res.data.results[0].formatted})
-		})
-		.catch(function (err) {
-			console.log(err);
-		})
-		  
-	}
-	
 	handleUploadImage(ev) {
         ev.preventDefault();
 
@@ -105,7 +77,7 @@ class Profile extends React.Component {
 		if (this.state.master.portfolio.length < 5) {
 			// console.log(str.replace(/\s/g, ''));
 			
-			axios.post('http://vk.masterimodel.com/node/masterPortfolio.add', data)
+			api.masterPortfolioAdd(data)
             .then(response => {
                 if (response.data.status === 'ok') {
 					document.location.reload();
@@ -137,7 +109,7 @@ class Profile extends React.Component {
 			'filename':  photo.split('/')[7]
 		};
 
-		axios.post('http://vk.masterimodel.com/node/masterPortfolio.deleteOnce', data2)
+		api.masterPortfolioDel(data2)
             .then(response => {
                 if (response.data === "portfolio item has been deleted") {
 					let arr = [...this.state.portfolio]; 

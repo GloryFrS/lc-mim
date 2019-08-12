@@ -1,6 +1,6 @@
 import React from 'react';
 import Cookies from 'universal-cookie';
-import axios from 'axios';
+import api from '../API/api';
 import { Alert } from 'reactstrap';
 // import { AppContextConsumer } from '../App';
 
@@ -30,26 +30,23 @@ class Login extends React.Component {
 		});
 	  }
 
-	onSubmit = (event) => {
+	onSubmit = async (event) => {
 		event.preventDefault();
-		axios.post(
-			'http://vk.masterimodel.com:3004/login', JSON.stringify(this.state),
-			{headers: {'Content-Type': 'application/json'}})
-		.then(res => {
+		try {
+			const res = await api.login(JSON.stringify(this.state))
 			if (res.status === 200) {
 				cookies.set('name', this.state.name, { path: '/' });
 				cookies.set('token', res.data.token, { path: '/' });
 				this.props.history.push('/profile');
 			} else {
-			const error = new Error(res.error);
-			throw error;
+				const error = new Error(res.error);
+				throw error;
 			}
-		})
-		.catch(err => {
-			console.error(err);
+		} catch(err) {
+			console.log(err);
 			this.setState({alertErr: true})
-			
-		});
+		}	
+	
 	}
 	onDismiss() {
 		this.setState({ alertSucces: false, alertErr: false });
