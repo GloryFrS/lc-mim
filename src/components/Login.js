@@ -2,6 +2,7 @@ import React from 'react';
 import Cookies from 'universal-cookie';
 import api from '../API/api';
 import { Alert } from 'reactstrap';
+import LogVk from './LogVk';
 // import { AppContextConsumer } from '../App';
 
 
@@ -18,11 +19,6 @@ class Login extends React.Component {
 		this.onDismiss = this.onDismiss.bind(this);
 	}
 
-	componentDidMount() {
-		
-	}
-
-	
 	handleInputChange = (event) => {
 		const { value, name } = event.target;
 		this.setState({
@@ -33,7 +29,7 @@ class Login extends React.Component {
 	onSubmit = async (event) => {
 		event.preventDefault();
 		try {
-			const res = await api.login(JSON.stringify(this.state))
+			const res = await api.login(JSON.stringify(this.state));
 			if (res.status === 200) {
 				cookies.set('name', this.state.name, { path: '/' });
 				cookies.set('token', res.data.token, { path: '/' });
@@ -52,6 +48,7 @@ class Login extends React.Component {
 		this.setState({ alertSucces: false, alertErr: false });
 	  }
 	
+
 	
 	render() {
 		
@@ -79,7 +76,9 @@ class Login extends React.Component {
 						
 						<input type="submit" className="button" value="Войти" />
 					</form>
-					{/* <a className="login-vk" href="/profile">Войти с помощью ВК</a> */}
+					<LogVk/>
+					{/* <Link to="/login-vk" className="login-vk">Войти с помощью ВК</Link> */}
+					
 				</div>
 			</div>	
 		)

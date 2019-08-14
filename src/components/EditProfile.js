@@ -4,7 +4,9 @@ import Cookies from 'universal-cookie';
 import { Alert } from 'reactstrap';
 import loading from '../img/loading.gif';
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter} from 'reactstrap';
+import { Link } from 'react-router-dom';
 import InputMask from 'react-input-mask';
+import ResultMap2 from './Map';
 import L from 'leaflet'; 
 
 
@@ -40,40 +42,35 @@ class EditProfile extends React.Component {
     this.toggle = this.toggle.bind(this);
   }
 
-  componentDidMount() {
+  async componentDidMount() {
 		const params = new URLSearchParams();
-		params.append('id', this.state.id);
-
-		api.mastersGet(params)
-      .then(res => {
-        this.setState({
-          name: res.data[0].full_name,
-          phone: res.data[0].phone_number,
-          lat: JSON.parse(res.data[0].coordinates).lat.toString(),
-          lng: JSON.parse(res.data[0].coordinates).lng.toString(),
-          country: JSON.parse(res.data[0].address).country.toString(),
-          city: JSON.parse(res.data[0].address).city.toString(),
-          street: JSON.parse(res.data[0].address).street.toString(),
-          house: JSON.parse(res.data[0].address).house.toString(),
-          vk: res.data[0].vk_id,
-          about: decodeURI(res.data[0].about_master),
-          loader: true,
-          select: ''
-        });
-      })
-
-    api.masterServices(params)
-      .then(res => {
-        this.setState({services: res.data});
-      })
+    params.append('id', this.state.id);
     const cook = { "token": cookies.get('token') };
-    api.sssh(cook)
-      .then(res => {
-        this.setState({
-          api: res.data.api,
-          apiG: res.data.apiG
-        });
-      })
+
+    try {
+      const res = await api.mastersGet(params);
+      const servicesData = await api.masterServices(params);
+      const sssh = await api.sssh(cook);
+      this.setState({
+        name: res.data[0].full_name,
+        phone: res.data[0].phone_number,
+        lat: JSON.parse(res.data[0].coordinates).lat.toString(),
+        lng: JSON.parse(res.data[0].coordinates).lng.toString(),
+        country: res.data[0].address ? JSON.parse(res.data[0].address).country.toString() : '',
+        city: res.data[0].address ? JSON.parse(res.data[0].address).city.toString() : '',
+        street: res.data[0].address ? JSON.parse(res.data[0].address).street.toString() : '',
+        house: res.data[0].address ? JSON.parse(res.data[0].address).house.toString() : '',
+        vk: res.data[0].vk_id,
+        about: decodeURI(res.data[0].about_master),
+        loader: true,
+        select: '',
+        services: servicesData.data,
+        api: sssh.data.api,
+        apiG: sssh.data.apiG
+      });  
+    } catch (error) {
+      console.log(error);
+    }
   }
   toggle() {
     this.setState(prevState => ({
@@ -81,7 +78,7 @@ class EditProfile extends React.Component {
     }));
   }
   
-  handleInputChange(event) {
+  async handleInputChange(event) {
     const target = event.target;
     const value = target.value;
     const name = target.name;
@@ -91,21 +88,25 @@ class EditProfile extends React.Component {
     });
     const params = new URLSearchParams();
     
-    if (target.id === 'service')
-      params.append('customer_type_id', target.value);
-      api.customerServices(params)  
-        .then(res => {
-          if (res.data.hasOwnProperty('customer_services')) {
-              this.setState({servicesTemp: res.data});
-          }
-        })
-        .catch(err => {
-            console.log(err);
-        });
+    if (target.id === 'service') {
+      params.append('customer_type_id', target.value); 
+      try {  
+        const res = await api.customerServices(params);   
+        if (res.data.hasOwnProperty('customer_services')) {
+            this.setState({servicesTemp: res.data});
+        }
+       } catch (err) {
+        console.log(err);
+       } 
+    } 
+      
+    
+    
+      
     
   }
 
-  handleOnSubmit = (e) => {
+  handleOnSubmit = async (e) => {
     e.preventDefault();
     const { name,phone,lat,lng,vk,about, country, city, street, house }  = this.state;
     const params = new URLSearchParams();
@@ -128,16 +129,14 @@ class EditProfile extends React.Component {
     params.append('reviews_number', "0");
     params.append('api_key',        this.state.api);
 
-
-    api.mastersEdit(params)
-      .then(res =>{
-        if (res.data.status === "ok") {
-          this.setState({alert: true});
-        }
-      })
-      .catch(function (error) {
-          console.log(error);
-      });
+    try {
+      const res = await api.mastersEdit(params);
+      if (res.data.status === "ok") {
+        this.setState({alert: true});
+      }  
+    } catch (error) {
+      console.log(error);
+    }
   }
   onDismiss() {
     this.setState({ alert: false, alertErr: false });
@@ -153,7 +152,7 @@ class EditProfile extends React.Component {
   }
 
 
-  setNewService (e) {
+  async setNewService (e) {
     e.preventDefault();
     const { id, select, select2, price } = this.state;
     const label = this.getSelectedText('service');
@@ -177,28 +176,25 @@ class EditProfile extends React.Component {
       params.append('price',   price); 
       params.append('api_key',        this.state.api);
 
-      
-      api.masterServicesAdd(params)
-        .then(res =>{
-          if (res.data.status === "ok") {
-            // this.setState({alert: true});
-            this.setState(prevState => ({
-              services: [...prevState.services, service],
-              alert: true
-            }))
-          }else {
-            this.setState({alertErr: true});
-          }
-        })
-        .catch(function (error) {
-            console.log(error);
-        });
-
+      try {
+        const res = await api.masterServicesAdd(params);
+        if (res.data.status === "ok") {
+          // this.setState({alert: true});
+          this.setState(prevState => ({
+            services: [...prevState.services, service],
+            alert: true
+          }))
+        }else {
+          this.setState({alertErr: true});
+        }  
+      } catch (error) {
+        console.log(error);
+      }
     }
     
   }
 
-  deleteSetvice(e, i, id_type, id_service){
+  async deleteSetvice(e, i, id_type, id_service){
     e.preventDefault();
     
 
@@ -208,22 +204,20 @@ class EditProfile extends React.Component {
     params.append('customer_types_id',      id_type);
     params.append('customer_services_id',   id_service); 
     params.append('api_key',        this.state.api);
+    try {
+      const response = await api.masterServicesDelete(params);
+      if (response.data.hasOwnProperty('status') && response.data.status === 'ok') {
+          this.setState({ alert: true });
+          let arr = [...this.state.services]; 
+          if (i !== -1) {
+            arr.splice(i, 1);
+            this.setState({services: arr});
+          }
+      }  
+    } catch (error) {
+      console.log(error);
+    }
     
-    api.masterServicesDelete(params)
-    .then(response => {
-        if (response.data.hasOwnProperty('status') && response.data.status === 'ok') {
-            this.setState({ alert: true });
-            let arr = [...this.state.services]; 
-            if (i !== -1) {
-              arr.splice(i, 1);
-              this.setState({services: arr});
-            }
-        }
-    })
-
-    .catch(function (error) {
-        console.log(error);
-    });
   }
 
   
@@ -235,6 +229,8 @@ class EditProfile extends React.Component {
     const { country, city , street, house } = this.state;
     const str = country + ',' + city + ',' + street + ',' + house;
     const geocoder = L.Control.Geocoder.mapbox('pk.eyJ1IjoiZ2xvcnlmcnMiLCJhIjoiY2p5eHZtdm05MWJjaDNtcnJxY3UwdnYwOCJ9.VhGilGU54k8Voi0pIaVggQ');
+    
+    
     const self = this;
     geocoder.geocode(str, function(results) {
       self.setState({lat: results[0].center.lat, lng: results[0].center.lng, modal: false});
@@ -284,7 +280,8 @@ class EditProfile extends React.Component {
                     <div className='col-md-5 col-xl-3 col-10'>
                       <div className="btn-block d-flex">
                           <button type="submit" className="btn">Сохранить</button>
-                          <button type="reset" onClick={() => this.props.history.goBack()} className=" btn-cancel">Отмена</button>
+                          <Link className=" btn-cancel" to='/profile'>Отмена</Link>
+                          {/* <button type="reset" onClick={() => this.props.history.goBack()} className=" btn-cancel">Отмена</button> */}
                       </div>
                     </div>
                     
@@ -347,7 +344,8 @@ class EditProfile extends React.Component {
             </div>
                 <div className="btn-block-bottom d-flex">
                     <button type="submit" className="btn" href="/card">Сохранить изменения</button>
-                    <button type="reset" onClick={() => this.props.history.goBack()} className=" btn-cancel">Отмена</button>
+                    <Link className=" btn-cancel" to='/profile'>Отмена</Link>
+                    {/* <button type="reset" onClick={() => this.props.history.push("/profile")} className=" btn-cancel">Отмена</button> */}
                 </div>
               </form>
           

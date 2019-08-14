@@ -14,7 +14,11 @@ import Profile from './components/Profile';
 import EditProfile from './components/EditProfile';
 import Cards from './components/Cards.jsx';
 import {AppContext} from './components/Login';
+import LogVk from './components/LogVk';
 import api from './API/api';
+import Callback from './components/Callback';
+import {AuthProvider} from "./components/Auth";
+import { PrivateRoute } from './components/PrivateRoute'
 
 
 const AppContextConsumer = AppContext.Consumer;
@@ -35,16 +39,15 @@ class App extends Component {
   }
  
 
-  componentDidMount(){
-    api.customerTypes()
-        .then(res=>{
-            if (Array.isArray(res.data)) {
-                this.setState({customerTypes: res.data})
-            }
-        })
-        .catch(err => {
-            console.log(err);
-        });
+  async componentDidMount(){
+    try{
+      const res = await api.customerTypes();
+      if (Array.isArray(res.data)) {
+        this.setState({customerTypes: res.data})
+      }
+    } catch(err) {
+      console.log(err);
+    }
   }
 
   toggle() {
@@ -55,7 +58,7 @@ class App extends Component {
 
   render() {
     return (
-      <div>
+      <AuthProvider>
         <Navbar color="light" light expand="md">
           <NavbarBrand href="/admin">Мастер и Модель</NavbarBrand>
           <NavbarToggler onClick={this.toggle} />
@@ -83,24 +86,16 @@ class App extends Component {
                 <Login {...props}/>
               )} 
               /> 
-                    
-              <Route path="/profile" render={(props)=>(
-                <WithAuth {...props}
-                  ComponentToProtect={Profile}
-                />
-              )} />
-              <Route path="/edit" render={(props)=>(
-                <WithAuth {...props}
-                  ComponentToProtect={EditProfile}
-                  customerTypes={this.state.customerTypes}
-
-                />
-              )} />
+              <PrivateRoute path="/profile" component={Profile}/>
+              <PrivateRoute path="/edit" customerTypes={this.state.customerTypes} component={EditProfile}/>
+              
               <Route path='/card' component={Cards}/>
-
+              <Route path='/callback' component={Callback}/>
+              <Route path='/login-vk' component={LogVk}/>
+              
               <Redirect to="/profile"/>
             </Switch>
-      </div>
+      </AuthProvider>
     );
   }
 }

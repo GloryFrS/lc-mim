@@ -9,6 +9,7 @@ import { VKShareButton } from 'react-share';
 import { Alert } from 'reactstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTimesCircle } from '@fortawesome/free-solid-svg-icons'
+import Registration from './Registration'
 
 
 
@@ -25,44 +26,52 @@ class Profile extends React.Component {
 			loader: false,
 			address: '',
 			services: [],
-			loader2: false,
-			id: cookies.get('name'),
+			id: '',
 			alertSucces: false,
 			alertErr: false,
 			api: '',
-			apiG: ''
+			apiG: '',
+			newMaster: false
 		};
 		this.handleUploadImage = this.handleUploadImage.bind(this);
 		this.onDismiss = this.onDismiss.bind(this);
 		this.deletePortfolio = this.deletePortfolio.bind(this);
 	}
-	componentDidMount() {
+	async componentDidMount() {
+
+		this.setState({id: cookies.get('name')});
 		const params = new URLSearchParams();
-		params.append('id', this.state.id);
-
-		api.mastersGet(params)
-		 .then(res => {
-			this.setState({master: res.data, portfolio: res.data.portfolio, loader: true});
-		 })
-		api.masterServices(params)
-			.then(res => {
-				this.setState({services: res.data, loader2:true});
-			})
-
+		params.append('id', cookies.get('name'));
 		const cook = {
 			"token": cookies.get('token')
 		};
 		
-		api.sssh(cook)
-			.then(res => {
-				this.setState({
-					api: res.data.api,
-					apiG: res.data.apiG
+
+		try {
+			const masterData = await api.mastersGet(params);
+			const masterServices = await api.masterServices(params);
+			const sssh = await api.sssh(cook);
+			if ( masterData.data == 'master not found' ) {
+				this.setState({ newMaster: true })
+			} else { 
+				this.setState({ 
+					master: masterData.data, 
+					portfolio: masterData.data.portfolio, 
+					loader: true,
+					services: masterServices.data, 
+					api: sssh.data.api,
+					apiG: sssh.data.apiG
 				});
-			})
+			 }
+			
+			
+		} catch (err) {
+			console.log(err)
+		}
+		
 	}
 
-	handleUploadImage(ev) {
+	async handleUploadImage (ev) {
         ev.preventDefault();
 
         const data = new FormData();
@@ -72,25 +81,25 @@ class Profile extends React.Component {
         for (let i = 0; i < this.uploadInput.files.length; i++) {
             data.append(`file${i + 1}`, this.uploadInput.files[i]);
 		}
-		
-		
+		const params = new URLSearchParams();
+		params.append('id', this.state.id);
 		if (this.state.master.portfolio.length < 5) {
 			// console.log(str.replace(/\s/g, ''));
-			
-			api.masterPortfolioAdd(data)
-            .then(response => {
-                if (response.data.status === 'ok') {
+			try {
+				const response = await api.masterPortfolioAdd(data);
+				if (response.data.status === 'ok') {
+					this.setState({ alertSucces: true });
+
 					document.location.reload();
 					console.log(response)
 					
                 } else {
 					this.setState({alertErr: true});
-                }
-
-            })
-            .catch(function (error) {
-                console.log(error);
-            });
+                }	
+			} catch (error) {
+				console.log(error);
+			}
+			
 		} else {
 			this.setState({alertErr: true});
 		}
@@ -101,51 +110,46 @@ class Profile extends React.Component {
 		this.setState({ alertSucces: false, alertErr: false });
 	  }
 	
-	deletePortfolio(e, photo, i) {
+	async deletePortfolio(e, photo, i) {
 		e.preventDefault();
 		const data2 = {
 			'id': this.state.id,  
 			'api_key':  this.state.api,
 			'filename':  photo.split('/')[7]
 		};
-
-		api.masterPortfolioDel(data2)
-            .then(response => {
-                if (response.data === "portfolio item has been deleted") {
-					let arr = [...this.state.portfolio]; 
-					if (i !== -1) {
-						arr.splice(i, 1);
-						this.setState({portfolio: arr});
-					}
-					console.log(response)
-					
-                } else {
-					this.setState({alertErr: true});
-					console.log(response)
-                }
-
-            })
-            .catch(function (error) {
-                console.log(error);
-            });
-		
-		
+		try {
+			const response = await api.masterPortfolioDel(data2);
+			if (response.data === "portfolio item has been deleted") {
+				let arr = [...this.state.portfolio]; 
+				if (i !== -1) {
+					arr.splice(i, 1);
+					this.setState({portfolio: arr});
+				}
+				console.log(response)
+				
+			} else {
+				this.setState({alertErr: true});
+				console.log(response)
+			}
+		} catch (error) {
+			console.log(error);
+		}
 	}	  
 
 	render() {
 		
-		if (this.state.loader && this.state.loader2) {
-			const {master, portfolio, services, alertErr, alertSucces} = this.state;
+		if (this.state.loader) {
+			const {master, portfolio, services, alertErr, alertSucces, newMaster} = this.state;
 			const about = decodeURI(master[0].about_master);
-			const servicesList = services.map((service, index) =>
+			const servicesList = !newMaster ? services.map((service, index) =>
 				<div key={index} className=" col-12 col-md-6">
 					<div className="service">
 						{service.customer_services_label} / {service.customer_types_label}
 						<span>от {service.price} рублей</span>
 					</div>
 				</div>
-			);
-			const portfolioList = portfolio.map((photo, index) =>
+			) : null;
+			const portfolioList = !newMaster ? portfolio.map((photo, index) =>
 				<div className='masters_portfolio' key={index}>
 					<FontAwesomeIcon icon={faTimesCircle} onClick={(e) => this.deletePortfolio(e,photo,index)} size="lg" color='red'/>
 					<Popup  trigger={<img src={photo} alt="" />} modal closeOnDocumentClick>
@@ -153,9 +157,9 @@ class Profile extends React.Component {
 					</Popup>
 				</div>
 				
-			);
+			) : null;
 			let addressObj = JSON.parse(master[0].address);
-			const addressStr = addressObj.country.toString() + ' ' + addressObj.city.toString() + ' ' + addressObj.street.toString() + ' ' + addressObj.house.toString();  
+			const addressStr = !addressObj ? '' : addressObj.country.toString() + ' ' + addressObj.city.toString() + ' ' + addressObj.street.toString() + ' ' + addressObj.house.toString();  
 			
 			return (
 				<div className="container">
@@ -217,9 +221,12 @@ class Profile extends React.Component {
 			);
 		} else {
 			return (
-				<div className='loading'>
-					<img src={loading} alt='loading...'/>
-				</div>
+				<>
+					<Registration id={this.state.id} isOpen={this.state.newMaster} api={this.state.api}/>
+					<div className='loading'>
+						<img src={loading} alt='loading...'/>
+					</div>
+				</>
 			)
 		}
 		
