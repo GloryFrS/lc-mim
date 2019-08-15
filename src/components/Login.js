@@ -48,8 +48,6 @@ class Login extends React.Component {
 		this.setState({ alertSucces: false, alertErr: false });
 	  }
 	
-
-	
 	render() {
 		
 		return (
@@ -77,7 +75,7 @@ class Login extends React.Component {
 						<input type="submit" className="button" value="Войти" />
 					</form>
 					<LogVk/>
-					{/* <Link to="/login-vk" className="login-vk">Войти с помощью ВК</Link> */}
+					{/* <Link to="/" onClick={(e)=> this.vkAuth(e)} className="login-vk">Войти с помощью ВК</Link> */}
 					
 				</div>
 			</div>	

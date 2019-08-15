@@ -1,14 +1,5 @@
 import React, { Component } from 'react';
-import { Link, Route, Switch, Redirect } from 'react-router-dom';
-import {
-  Collapse,
-  Navbar,
-  NavbarToggler,
-  NavbarBrand,
-  Nav,
-  NavItem
- } from 'reactstrap';
-import WithAuth from './withAuth';
+import { Route, Switch, Redirect } from 'react-router-dom';
 import Login from './components/Login';
 import Profile from './components/Profile';
 import EditProfile from './components/EditProfile';
@@ -18,11 +9,7 @@ import LogVk from './components/LogVk';
 import api from './API/api';
 import Callback from './components/Callback';
 import {AuthProvider} from "./components/Auth";
-import { PrivateRoute } from './components/PrivateRoute'
-
-
-const AppContextConsumer = AppContext.Consumer;
-// const AppContext = React.createContext ();
+import { PrivateRoute } from './components/PrivateRoute';
 
 class App extends Component {
   constructor(props){
@@ -32,10 +19,6 @@ class App extends Component {
         customerTypes: [],
         isOpen: false
       };
-      this.toggle = this.toggle.bind(this);
-    
-    
-    
   }
  
 
@@ -50,51 +33,26 @@ class App extends Component {
     }
   }
 
-  toggle() {
-    this.setState({
-      isOpen: !this.state.isOpen
-    });
-  }
+  
+  
 
   render() {
     return (
       <AuthProvider>
-        <Navbar color="light" light expand="md">
-          <NavbarBrand href="/admin">Мастер и Модель</NavbarBrand>
-          <NavbarToggler onClick={this.toggle} />
-          <Collapse isOpen={this.state.isOpen} navbar>
-            <Nav className="ml-auto" navbar>
-              <NavItem>
-                <Link className='nav-link' to="/login/">Войти</Link>
-              </NavItem>
-              <NavItem>
-                <Link className='nav-link' to="/profile/">Профиль</Link>
-              </NavItem>
-            </Nav>
-          </Collapse>
-        </Navbar>
-        
-          {/* <AppContextConsumer>
-            {({ id }) => (
-            <h1>{id}</h1>
-            )}
-          </AppContextConsumer> */}
+        <Switch>
+          <Route path="/login" render={(props)=>(
+            <Login {...props}/>
+          )} 
+          /> 
+          <PrivateRoute path="/profile" component={Profile}/>
+          <PrivateRoute path="/edit" customerTypes={this.state.customerTypes} component={EditProfile}/>
           
-         
-            <Switch>
-              <Route path="/login" render={(props)=>(
-                <Login {...props}/>
-              )} 
-              /> 
-              <PrivateRoute path="/profile" component={Profile}/>
-              <PrivateRoute path="/edit" customerTypes={this.state.customerTypes} component={EditProfile}/>
-              
-              <Route path='/card' component={Cards}/>
-              <Route path='/callback' component={Callback}/>
-              <Route path='/login-vk' component={LogVk}/>
-              
-              <Redirect to="/profile"/>
-            </Switch>
+          <Route path='/card' component={Cards}/>
+          <Route path='/callback' component={Callback}/>
+          <Route path='/login-vk' component={LogVk}/>
+          
+          <Redirect to="/profile"/>
+        </Switch>
       </AuthProvider>
     );
   }

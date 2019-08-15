@@ -1,6 +1,6 @@
 import React from 'react';
 import { withAuth } from './Auth';
-import { Route, Redirect } from 'react-router-dom';
+import { Route } from 'react-router-dom';
 import WithAuth from '../withAuth';
 
 

@@ -7,11 +7,11 @@ import {Link} from 'react-router-dom';
 import Cookies from 'universal-cookie';
 import { VKShareButton } from 'react-share';
 import { Alert } from 'reactstrap';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faTimesCircle } from '@fortawesome/free-solid-svg-icons'
-import Registration from './Registration'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTimesCircle } from '@fortawesome/free-solid-svg-icons';
+import Registration from './Registration';
 
-
+import Menu from "./Menu";
 
 const cookies = new Cookies();
 
@@ -52,7 +52,7 @@ class Profile extends React.Component {
 			const masterData = await api.mastersGet(params);
 			const masterServices = await api.masterServices(params);
 			const sssh = await api.sssh(cook);
-			if ( masterData.data == 'master not found' ) {
+			if ( masterData.data === 'master not found' ) {
 				this.setState({ newMaster: true })
 			} else { 
 				this.setState({ 
@@ -169,66 +169,69 @@ class Profile extends React.Component {
 			const addressStr = !addressObj ? '' : addressObj.country.toString() + ' ' + addressObj.city.toString() + ' ' + addressObj.street.toString() + ' ' + addressObj.house.toString();  
 			
 			return (
-				<div className="container">
-					<div style={ alertSucces || alertErr ? {"display": 'block'} : {"display": 'none'} } onClick={this.onDismiss} className="popup-alert">
-						<Alert color="success" onClick={this.onDismiss} isOpen={alertSucces} toggle={this.onDismiss}>"Портфолио обновлено!"</Alert>
-						<Alert color="danger" onClick={this.onDismiss} isOpen={alertErr} toggle={this.onDismiss}>"Ошибка, нельзя добавить больше 5 фотографий"</Alert>
-					</div>
-					<div className="row">
-						<div className="col-12">
-							<h3 className="title">Ваш профиль</h3>
-							<div className="row no-gutters">
-								<div className="col-lg-3 col-md-4 col-3">
-									<img className="info-photo" src={master.avatar_url} alt="" />
-								</div>
-								<div className="col-lg-9 col-md-8 col-9">
-									<div className="info">
-										<p className="info_name">{master[0].full_name}</p>
-										<p className="info_phone">{master[0].phone_number}</p>
-										<p className="info_adress">{ addressStr }</p>
-										<Link to="/edit" className="btn">Редактирование</Link>
+				<>
+					<Menu/>
+					<div className="container">
+						<div style={ alertSucces || alertErr ? {"display": 'block'} : {"display": 'none'} } onClick={this.onDismiss} className="popup-alert">
+							<Alert color="success" onClick={this.onDismiss} isOpen={alertSucces} toggle={this.onDismiss}>"Портфолио обновлено!"</Alert>
+							<Alert color="danger" onClick={this.onDismiss} isOpen={alertErr} toggle={this.onDismiss}>"Ошибка, нельзя добавить больше 5 фотографий"</Alert>
+						</div>
+						<div className="row">
+							<div className="col-12">
+								<h3 className="title">Ваш профиль</h3>
+								<div className="row no-gutters">
+									<div className="col-lg-3 col-md-4 col-3">
+										<img className="info-photo" src={master.avatar_url} alt="" />
 									</div>
+									<div className="col-lg-9 col-md-8 col-9">
+										<div className="info">
+											<p className="info_name">{master[0].full_name}</p>
+											<p className="info_phone">{master[0].phone_number}</p>
+											<p className="info_adress">{ addressStr }</p>
+											<Link to="/edit" className="btn">Редактирование</Link>
+										</div>
+									</div>
+									
 								</div>
-								
 							</div>
 						</div>
-					</div>
-					<div className="row no-gutters">
-						<h3 className="title mt-5">Услуги</h3>
-						{servicesList}
-					</div>
-					<div className="row no-gutters">
-						<h3 className="title mt-5">О себе</h3>
-						<p>{about}</p>
-					</div>
-					<div className="row no-gutters">
-						
-						<h3 className="title mt-5">Примеры работ</h3>
-						{this.state.loadImg ? <div className='loading'>
-							<img src={loading} alt='loading...'/>
-						</div> : ''}
-						<div className="sample">				
-							{portfolioList}
-							<form onSubmit={this.handleUploadImage}>
-								<label className="sample-file-upload">
-									<input onChange={this.handleUploadImage} ref={(ref) => { this.uploadInput = ref; }} type="file" multiple />
-								</label>
-							</form>
+						<div className="row no-gutters">
+							<h3 className="title mt-5">Услуги</h3>
+							{servicesList}
+						</div>
+						<div className="row no-gutters">
+							<h3 className="title mt-5">О себе</h3>
+							<p>{about}</p>
+						</div>
+						<div className="row no-gutters">
+							
+							<h3 className="title mt-5">Примеры работ</h3>
+							{this.state.loadImg ? <div className='loading'>
+								<img src={loading} alt='loading...'/>
+							</div> : ''}
+							<div className="sample">				
+								{portfolioList}
+								<form onSubmit={this.handleUploadImage}>
+									<label className="sample-file-upload">
+										<input onChange={this.handleUploadImage} ref={(ref) => { this.uploadInput = ref; }} type="file" multiple />
+									</label>
+								</form>
+							</div>
+						</div>
+						<div className="row no-gutters">
+							<div className='share'>
+								<VKShareButton title='Мой профиль'
+									description='Мой профиль' image='https://static.tildacdn.com/tild3861-3535-4630-b135-336536613961/center_2.png' url={'http://vk.masterimodel.com/card/' + this.state.id}>
+									<button className="btn ">Поделиться профилем</button>	
+								</VKShareButton>
+								<a className="btn see" target="_blank" rel="noopener noreferrer" href={'http://vk.masterimodel.com/card/' + this.state.id}>Посмотреть профиль</a>
+							</div>	
+						</div>
+						<div className="banner">
+							<img src={banner} alt="" />
 						</div>
 					</div>
-					<div className="row no-gutters">
-						<div className='share'>
-							<VKShareButton title='Мой профиль'
-								description='Мой профиль' image='https://static.tildacdn.com/tild3861-3535-4630-b135-336536613961/center_2.png' url={'http://vk.masterimodel.com/card/' + this.state.id}>
-								<button className="btn ">Поделиться профилем</button>	
-							</VKShareButton>
-							<a className="btn see" target="_blank" rel="noopener noreferrer" href={'http://vk.masterimodel.com/card/' + this.state.id}>Посмотреть профиль</a>
-						</div>	
-					</div>
-					<div className="banner">
-						<img src={banner} alt="" />
-					</div>
-				</div>
+				</>
 			);
 		} else {
 			return (

@@ -1,5 +1,6 @@
 import React from "react";
 import {withAuth} from '../components/Auth';
+import loading from '../img/loading.gif';
 
 class Callback extends React.Component {
     
@@ -12,9 +13,9 @@ class Callback extends React.Component {
 
     render(){
         return (
-           
-                'loading...'
-            
+            <div className='loading'>
+                <img src={loading} alt='loading...'/>
+            </div>
         );
     }
 }

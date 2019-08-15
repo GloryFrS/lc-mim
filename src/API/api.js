@@ -17,7 +17,7 @@ export default {
   login: params => axios.post('http://vk.masterimodel.com:3004/login', params, {headers: {'Content-Type': 'application/json'}}),
   checkToken: params => axios.post('http://vk.masterimodel.com:3004/checkToken', params),
   sssh: params => axios.post('https://vk.masterimodel.com:3005/ss33sh',params),
-  
+  authVk: params => axios.post('https://vk.masterimodel.com:3005/vkauth',params),  
   
   // etc.
 }

@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import { withRouter } from 'react-router-dom'
 import auth0 from 'auth0-js'
 import Cookies from 'universal-cookie';
+import api from '../API/api';
 
 
 const cookies = new Cookies();
@@ -27,9 +28,13 @@ class AuthProvider extends Component {
             if (authResult && authResult.accessToken) {
                 const self = this
                 this.setState({ isAuthorized:true }, () => {
-                    this.auth0.client.userInfo(authResult.accessToken, function(err, user) {
+                    this.auth0.client.userInfo(authResult.accessToken, async function(err, user) {
                         let name = user.sub.replace(/\D/g,'');
+                        
+                        const response = await api.authVk({"id":name});
                         cookies.set('name', name, { path: '/' });
+                        cookies.set('token', response.data.token, { path: '/' });
+                        
                         self.props.history.push("/profile");
                     });
 
