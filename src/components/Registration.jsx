@@ -56,7 +56,7 @@ export default class Registration extends React.Component {
             params.append('about_master',   about);
             params.append('coordinates',     JSON.stringify({
                 'lat': results[0].center.lat,
-                'lng': results[0].center.lat
+                'lng': results[0].center.lng
             }));
             params.append('address',     JSON.stringify({
                 'country': country,

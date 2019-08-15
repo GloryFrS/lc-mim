@@ -17,7 +17,7 @@ class AuthProvider extends Component {
     auth0 = new auth0.WebAuth({
         domain: 'dev-o767y9xo.eu.auth0.com',
         clientID: 'DjdBsgV3wv3nEwY6wAYoymOF6Ejd4Qa9',
-        redirectUri: 'http://localhost:3000/admin/callback',
+        redirectUri: 'http://vk.masterimodel.com/admin/callback',
         responseType: 'token id_token',
         scope: 'openid'
     })

@@ -69,8 +69,8 @@ class Card extends React.Component {
                 {servicesList}
               </div>
               <div className="d-flex j-s">
-                <a className="btn" href={"https://vk.com/app6967349#master?id" + id}>Позвонить</a>
-                <a className="btn" target="_blank" rel='noreferrer noopener' href={"https://vk.com/app6967349#master?id" + id}>Написать</a>
+                <a className="btn" href={"tel:" + master[0].phone_number}>Позвонить</a>
+                <a className="btn" target="_blank" rel='noreferrer noopener' href={"https://vk.me/id" + id}>Написать</a>
                 <a className="btn" target="_blank" rel='noreferrer noopener' href={"https://vk.com/app6967349#master?id" + id}>Отзывы</a>
               </div>
               <div className="map">

@@ -31,7 +31,8 @@ class Profile extends React.Component {
 			alertErr: false,
 			api: '',
 			apiG: '',
-			newMaster: false
+			newMaster: false,
+			loadImg: false
 		};
 		this.handleUploadImage = this.handleUploadImage.bind(this);
 		this.onDismiss = this.onDismiss.bind(this);
@@ -72,10 +73,9 @@ class Profile extends React.Component {
 	}
 
 	async handleUploadImage (ev) {
-        ev.preventDefault();
-
+		ev.preventDefault();
+		this.setState({ loadImg: true });
         const data = new FormData();
-
         data.append('id', this.state.id);  //this.uploadInput.files[0]);
         data.append('api_key',  this.state.api); //this.uploadInput.files[0]);
         for (let i = 0; i < this.uploadInput.files.length; i++) {
@@ -88,7 +88,7 @@ class Profile extends React.Component {
 			try {
 				const response = await api.masterPortfolioAdd(data);
 				if (response.data.status === 'ok') {
-					this.setState({ alertSucces: true });
+					this.setState({ alertSucces: true, loadImg: false });
 
 					document.location.reload();
 					console.log(response)
@@ -137,6 +137,13 @@ class Profile extends React.Component {
 	}	  
 
 	render() {
+		if( this.state.loadImg ) {
+			return (
+				<div className='loading'>
+					<img src={loading} alt='loading...'/>
+				</div>
+			)
+		}
 		
 		if (this.state.loader) {
 			const {master, portfolio, services, alertErr, alertSucces, newMaster} = this.state;
@@ -195,7 +202,11 @@ class Profile extends React.Component {
 						<p>{about}</p>
 					</div>
 					<div className="row no-gutters">
+						
 						<h3 className="title mt-5">Примеры работ</h3>
+						{this.state.loadImg ? <div className='loading'>
+							<img src={loading} alt='loading...'/>
+						</div> : ''}
 						<div className="sample">				
 							{portfolioList}
 							<form onSubmit={this.handleUploadImage}>

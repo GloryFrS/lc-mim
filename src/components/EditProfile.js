@@ -196,8 +196,6 @@ class EditProfile extends React.Component {
 
   async deleteSetvice(e, i, id_type, id_service){
     e.preventDefault();
-    
-
     const { id } = this.state;
     const params = new URLSearchParams();
     params.append('id', id);
