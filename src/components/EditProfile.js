@@ -6,8 +6,9 @@ import loading from '../img/loading.gif';
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter} from 'reactstrap';
 import { Link } from 'react-router-dom';
 import InputMask from 'react-input-mask';
-import ResultMap2 from './Map';
+import './Map';
 import L from 'leaflet'; 
+import Menu from "./Menu";
 
 
 const cookies = new Cookies();
@@ -262,10 +263,11 @@ class EditProfile extends React.Component {
 			)
     }
     return (
-        <div className="container">
+        <>
+          <Menu/>
+          <div className="container">
           <div className="row">
             <div className="col-12">
-              
               <div style={ alert || alertErr ? {"display": 'block'} : {"display": 'none'} } onClick={this.onDismiss} className="popup-alert">
                 <Alert color="success" onClick={this.onDismiss} isOpen={alert} toggle={this.onDismiss}>"Данные успешно отредактированы!"</Alert>
                 <Alert color="danger" isOpen={alertErr} onClick={this.onDismiss} toggle={this.onDismiss}>"Ошибка, такая услуга уже есть!"</Alert>
@@ -380,6 +382,7 @@ class EditProfile extends React.Component {
             </div>
           </div>
         </div>
+        </>
     )
       
   }

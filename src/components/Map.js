@@ -3,12 +3,12 @@ import L from 'leaflet';
 // import Leaflet's CSS
 import 'leaflet/dist/leaflet.css';
 import 'leaflet-control-geocoder/dist/Control.Geocoder.css';
-
+import  markerImg from '../img/marker-icon-red.png';
 // import './ResultMap.css';
 import 'leaflet-control-geocoder';
 
 const redIcon = L.icon({
-  iconUrl: 'marker-icon-red.png',
+  iconUrl: markerImg,
   iconSize: [25, 41], // size of the icon
   iconAnchor: [12, 40], // point of the icon which will correspond to marker's location
 });
@@ -43,7 +43,7 @@ class ResultMap2 extends Component {
    
     
     var map = L.map('map').setView([this.props.lat, this.props.lng], 15);
-    var geocoder = L.Control.Geocoder.mapbox('pk.eyJ1IjoiZ2xvcnlmcnMiLCJhIjoiY2p5eHZtdm05MWJjaDNtcnJxY3UwdnYwOCJ9.VhGilGU54k8Voi0pIaVggQ');
+    // var geocoder = L.Control.Geocoder.mapbox('pk.eyJ1IjoiZ2xvcnlmcnMiLCJhIjoiY2p5eHZtdm05MWJjaDNtcnJxY3UwdnYwOCJ9.VhGilGU54k8Voi0pIaVggQ');
       
       // if (URLSearchParams && window.location.search) {
       //   // parse /?geocoder=nominatim from URL
@@ -57,43 +57,36 @@ class ResultMap2 extends Component {
       //     console.warn('Unsupported geocoder', geocoderString);
       //   }
       // }
-      L.Control.geocoder({
-        geocoder: geocoder
-      }).addTo(map);
+      // L.Control.geocoder({
+      //   geocoder: geocoder
+      // }).addTo(map);
       var marker = L.marker({lat:this.props.lat, lng:this.props.lng},{ icon: redIcon });
       marker.addTo(map);
       
       L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
         attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
       }).addTo(map);
-
-      console.log();
       
-      geocoder.geocode('Новосибирск', function(results) {
-        console.log(results);
-      })
-      
-      
-      map.on('click', function(e) { 
-        geocoder.reverse(e.latlng, map.options.crs.scale(map.getZoom()), function(results) {
-          var r = results[0];
-          console.log(r);
-          if (r) {
-            if (marker) {
-              marker
-                .setLatLng(r.center)
-                .setPopupContent(r.html || r.name)
-                .openPopup();
+      // map.on('click', function(e) { 
+      //   geocoder.reverse(e.latlng, map.options.crs.scale(map.getZoom()), function(results) {
+      //     var r = results[0];
+      //     console.log(r);
+      //     if (r) {
+      //       if (marker) {
+      //         marker
+      //           .setLatLng(r.center)
+      //           .setPopupContent(r.html || r.name)
+      //           .openPopup();
                 
-            } else {
-              marker = L.marker(r.center)
-                .bindPopup(r.name)
-                .addTo(map)
-                .openPopup();
-            }
-          }
-        });
-      });
+      //       } else {
+      //         marker = L.marker(r.center)
+      //           .bindPopup(r.name)
+      //           .addTo(map)
+      //           .openPopup();
+      //       }
+      //     }
+      //   });
+      // });
 
 
     

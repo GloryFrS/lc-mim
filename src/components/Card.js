@@ -2,6 +2,7 @@ import React from 'react';
 import api from '../API/api';
 import loading from '../img/loading.gif';
 import notFound from '../img/404error.jpeg';
+import ResultMap2 from "./Map";
 
 
 class Card extends React.Component {
@@ -24,7 +25,7 @@ class Card extends React.Component {
       api.mastersGet(params)
         .then(res => {
           this.setState({master: res.data, loader: true});
-          // console.log(this.state.master);
+          console.log( JSON.parse(this.state.master[0].coordinates).lat);
         })
       api.masterServices(params)
         .then(res => {
@@ -34,7 +35,8 @@ class Card extends React.Component {
     
 
     render() {
-      const {master, services, loader, id} = this.state;
+      const { master, services, loader, id } = this.state;
+      
       const servicesList = services.map((service, index) =>
         <div key={index} className=" col-12 col-md-6">
           <div className="service">
@@ -56,6 +58,7 @@ class Card extends React.Component {
       )} 
       
       let addressObj = JSON.parse(master[0].address);
+      const geoObj = JSON.parse(master[0].coordinates);
 			const addressStr = addressObj ? addressObj.country.toString() + ' ' + addressObj.city.toString() + ' ' + addressObj.street.toString() + ' ' + addressObj.house.toString() : '';
       return (
           <div>
@@ -74,6 +77,7 @@ class Card extends React.Component {
                 <a className="btn" target="_blank" rel='noreferrer noopener' href={"https://vk.com/app6967349#master?id" + id}>Отзывы</a>
               </div>
               <div className="map">
+                  <ResultMap2 lat={geoObj.lat} lng={geoObj.lng}/>
               </div>
             </div>
           </div>

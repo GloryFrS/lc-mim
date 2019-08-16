@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button, Modal, ModalHeader, ModalBody, Input } from 'reactstrap';
 import InputMask from 'react-input-mask';
-import ResultMap2 from './Map';
+import  './Map';
 import L from 'leaflet'; 
 import api from '../API/api';
 import { Link, Redirect } from 'react-router-dom';
