@@ -1,5 +1,4 @@
 import React from 'react';
-import banner from '../img/banner.png';
 import Popup from "reactjs-popup";
 import loading from '../img/loading.gif';
 import api from '../API/api';
@@ -52,6 +51,11 @@ class Profile extends React.Component {
 			const masterData = await api.mastersGet(params);
 			const masterServices = await api.masterServices(params);
 			const sssh = await api.sssh(cook);
+			const link = await api.linkGet();
+				
+			if (link.status === 200){
+				this.setState({ link: link.data.status[0].link });
+			}
 			if ( masterData.data === 'master not found' ) {
 				this.setState({ newMaster: true })
 			} else { 
@@ -109,6 +113,9 @@ class Profile extends React.Component {
 	onDismiss() {
 		this.setState({ alertSucces: false, alertErr: false });
 	  }
+
+	
+	
 	
 	async deletePortfolio(e, photo, i) {
 		e.preventDefault();
@@ -146,7 +153,7 @@ class Profile extends React.Component {
 		}
 		
 		if (this.state.loader) {
-			const {master, portfolio, services, alertErr, alertSucces, newMaster} = this.state;
+			const {master, portfolio, services, alertErr, alertSucces, newMaster, link} = this.state;
 			const about = decodeURI(master[0].about_master);
 			const servicesList = !newMaster ? services.map((service, index) =>
 				<div key={index} className=" col-12 col-md-6">
@@ -221,14 +228,16 @@ class Profile extends React.Component {
 						<div className="row no-gutters">
 							<div className='share'>
 								<VKShareButton title='Мой профиль'
-									description='Мой профиль' image='https://static.tildacdn.com/tild3861-3535-4630-b135-336536613961/center_2.png' url={'http://vk.masterimodel.com/card/' + this.state.id}>
+									description='Мой профиль' image='https://static.tildacdn.com/tild3861-3535-4630-b135-336536613961/center_2.png' url={'http://lk.masterimodel.app/card/' + this.state.id}>
 									<button className="btn ">Поделиться профилем</button>	
 								</VKShareButton>
-								<a className="btn see" target="_blank" rel="noopener noreferrer" href={'http://vk.masterimodel.com/card/' + this.state.id}>Посмотреть профиль</a>
+								<a className="btn see" target="_blank" rel="noopener noreferrer" href={'http://lk.masterimodel.app/card/' + this.state.id}>Посмотреть профиль</a>
 							</div>	
 						</div>
 						<div className="banner">
-							<img src={banner} alt="" />
+							<a href={link} target="_blank" rel="noopener noreferrer">
+								<img src={'http://vk.masterimodel.com/node/images/banners/mim.png'} alt="" />
+							</a>
 						</div>
 					</div>
 				</>

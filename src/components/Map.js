@@ -3,7 +3,7 @@ import L from 'leaflet';
 // import Leaflet's CSS
 import 'leaflet/dist/leaflet.css';
 import 'leaflet-control-geocoder/dist/Control.Geocoder.css';
-import  markerImg from '../img/marker-icon-red.png';
+import  markerImg from '../img/default.9c0dca6d.svg';
 // import './ResultMap.css';
 import 'leaflet-control-geocoder';
 
@@ -63,7 +63,7 @@ class ResultMap2 extends Component {
       var marker = L.marker({lat:this.props.lat, lng:this.props.lng},{ icon: redIcon });
       marker.addTo(map);
       
-      L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+      L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
         attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
       }).addTo(map);
       
