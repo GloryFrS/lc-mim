@@ -1,6 +1,6 @@
 import React from 'react';
 import api from '../API/api';
-import loading from '../img/loading.gif';
+import Loading from './Loading';
 import notFound from '../img/404error.jpeg';
 import ResultMap2 from "./Map";
 
@@ -47,9 +47,7 @@ class Card extends React.Component {
       );
       
       if (!loader){ return (
-        <div className='loading'>
-          <img src={loading} alt='loading...'/>
-        </div>
+        <Loading/>
       )}
       if (this.state.master === "master not found"){ return (
         <div className='notFound'>

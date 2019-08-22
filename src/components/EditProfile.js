@@ -26,7 +26,7 @@ class EditProfile extends React.Component {
       modal: false,
       backdrop: true,
       alertErr: false, alert: null,
-      api: '', apiG: '',
+      api: '', apiG: '', mapbox: '',
       isLocating: false,
       isSubmitting: false,
       response: {}
@@ -67,7 +67,8 @@ class EditProfile extends React.Component {
         select: '',
         services: servicesData.data,
         api: sssh.data.api,
-        apiG: sssh.data.apiG
+        apiG: sssh.data.apiG,
+        mapbox: sssh.data.mapbox
       });  
     } catch (error) {
       console.log(error);

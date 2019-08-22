@@ -1,6 +1,6 @@
 import React from 'react';
 import Popup from "reactjs-popup";
-import loading from '../img/loading.gif';
+import Loading from './Loading';
 import api from '../API/api';
 import {Link} from 'react-router-dom';
 import Cookies from 'universal-cookie';
@@ -46,7 +46,6 @@ class Profile extends React.Component {
 			"token": cookies.get('token')
 		};
 		
-
 		try {
 			const masterData = await api.mastersGet(params);
 			const masterServices = await api.masterServices(params);
@@ -67,6 +66,7 @@ class Profile extends React.Component {
 					api: sssh.data.api,
 					apiG: sssh.data.apiG
 				});
+				console.log(masterData.data);
 			 }
 			
 			
@@ -114,9 +114,6 @@ class Profile extends React.Component {
 		this.setState({ alertSucces: false, alertErr: false });
 	  }
 
-	
-	
-	
 	async deletePortfolio(e, photo, i) {
 		e.preventDefault();
 		const data2 = {
@@ -146,9 +143,7 @@ class Profile extends React.Component {
 	render() {
 		if( this.state.loadImg ) {
 			return (
-				<div className='loading'>
-					<img src={loading} alt='loading...'/>
-				</div>
+				<Loading/>
 			)
 		}
 		
@@ -213,9 +208,7 @@ class Profile extends React.Component {
 						<div className="row no-gutters">
 							
 							<h3 className="title mt-5">Примеры работ</h3>
-							{this.state.loadImg ? <div className='loading'>
-								<img src={loading} alt='loading...'/>
-							</div> : ''}
+							{this.state.loadImg ? <Loading/> : ''}
 							<div className="sample">				
 								{portfolioList}
 								<form onSubmit={this.handleUploadImage}>
@@ -246,9 +239,7 @@ class Profile extends React.Component {
 			return (
 				<>
 					<Registration id={this.state.id} isOpen={this.state.newMaster} api={this.state.api}/>
-					<div className='loading'>
-						<img src={loading} alt='loading...'/>
-					</div>
+					<Loading/>
 				</>
 			)
 		}
