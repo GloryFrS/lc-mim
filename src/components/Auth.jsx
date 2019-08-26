@@ -18,7 +18,7 @@ class AuthProvider extends Component {
     auth0 = new auth0.WebAuth({
         domain: 'dev-o767y9xo.eu.auth0.com',
         clientID: 'DjdBsgV3wv3nEwY6wAYoymOF6Ejd4Qa9',
-        redirectUri: 'http://lk.masterimodel.app/callback',
+        redirectUri: 'http://localhost:3001/callback',
         responseType: 'token id_token',
         scope: 'openid'
     })
@@ -30,9 +30,8 @@ class AuthProvider extends Component {
                 this.setState({ isAuthorized:true }, () => {
                     this.auth0.client.userInfo(authResult.accessToken, async function(err, user) {
                         let name = user.sub.replace(/\D/g,'');
-                        
+                        console.log(name);
                         const response = await api.authVk({"id":name});
-                        cookies.set('name', name, { path: '/' });
                         cookies.set('token', response.data.token, { path: '/' });
                         
                         self.props.history.push("/profile");

@@ -9,6 +9,7 @@ import InputMask from 'react-input-mask';
 import './Map';
 import L from 'leaflet'; 
 import Menu from "./Menu";
+import Chatra from "./Chatra"
 
 
 const cookies = new Cookies();
@@ -17,7 +18,6 @@ class EditProfile extends React.Component {
   constructor(props){
     super(props);
     this.state={
-      id: cookies.get('name'),
       services: [],
       name: '', phone: '', lat: '', lng: '', vk: '', about: '', price: '', country: '', city: '', street: '', house: '',select: '', select2: '',
       loader: false,
@@ -44,12 +44,13 @@ class EditProfile extends React.Component {
   }
 
   async componentDidMount() {
-		const params = new URLSearchParams();
-    params.append('id', this.state.id);
+		
     const cook = { "token": cookies.get('token') };
 
     try {
-      const res = await api.mastersGet(params);
+      const res = await api.mastersGet2(cook);
+      const params = new URLSearchParams();
+      params.append('id', res.data[0].vk_id);
       const servicesData = await api.masterServices(params);
       const sssh = await api.sssh(cook);
       this.setState({
@@ -101,11 +102,6 @@ class EditProfile extends React.Component {
         console.log(err);
        } 
     } 
-      
-    
-    
-      
-    
   }
 
   handleOnSubmit = async (e) => {
@@ -156,7 +152,7 @@ class EditProfile extends React.Component {
 
   async setNewService (e) {
     e.preventDefault();
-    const { id, select, select2, price } = this.state;
+    const { vk, select, select2, price } = this.state;
     const label = this.getSelectedText('service');
     const label2 = this.getSelectedText('service2');
     const service = {
@@ -172,7 +168,7 @@ class EditProfile extends React.Component {
     if (select.trim() !== '' && select2 !== '' && price.trim() !== '') {
       
       const params = new URLSearchParams();
-      params.append('id', id);
+      params.append('id', vk);
       params.append('customer_types_id',      select);
       params.append('customer_services_id',   select2);
       params.append('price',   price); 
@@ -198,9 +194,9 @@ class EditProfile extends React.Component {
 
   async deleteSetvice(e, i, id_type, id_service){
     e.preventDefault();
-    const { id } = this.state;
+    const { vk } = this.state;
     const params = new URLSearchParams();
-    params.append('id', id);
+    params.append('id', vk);
     params.append('customer_types_id',      id_type);
     params.append('customer_services_id',   id_service); 
     params.append('api_key',        this.state.api);
@@ -265,6 +261,7 @@ class EditProfile extends React.Component {
     }
     return (
         <>
+          <Chatra/>
           <Menu/>
           <div className="container">
           <div className="row">

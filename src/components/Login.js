@@ -3,6 +3,7 @@ import Cookies from 'universal-cookie';
 import api from '../API/api';
 import { Alert } from 'reactstrap';
 import LogVk from './LogVk';
+import Chatra from "./Chatra"
 // import { AppContextConsumer } from '../App';
 
 
@@ -31,7 +32,6 @@ class Login extends React.Component {
 		try {
 			const res = await api.login(JSON.stringify(this.state));
 			if (res.status === 200) {
-				cookies.set('name', this.state.name, { path: '/' });
 				cookies.set('token', res.data.token, { path: '/' });
 				this.props.history.push('/profile');
 			} else {
@@ -51,34 +51,37 @@ class Login extends React.Component {
 	render() {
 		
 		return (
-			<div className='body-login d-flex'>
-				<div style={ this.state.alertErr ? {"display": 'block'} : {"display": 'none'} } onClick={this.onDismiss} className="popup-alert">
-					<Alert color="danger" isOpen={this.state.alertErr} toggle={this.onDismiss}>"Неверно введен логин или пароль"</Alert>
-				</div>
-				<div className='login'>
-					<h1>Вход <br/> в личный кабинет</h1>
-					<form onSubmit={this.onSubmit}>
-						<input type="text"
-							name="name"
-							placeholder="Введите ВК ID"
-							value={this.state.name}
+			<>
+				<Chatra/>
+				<div className='body-login d-flex'>
+					<div style={ this.state.alertErr ? {"display": 'block'} : {"display": 'none'} } onClick={this.onDismiss} className="popup-alert">
+						<Alert color="danger" isOpen={this.state.alertErr} toggle={this.onDismiss}>"Неверно введен логин или пароль"</Alert>
+					</div>
+					<div className='login'>
+						<h1>Вход <br/> в личный кабинет</h1>
+						<form onSubmit={this.onSubmit}>
+							<input type="text"
+								name="name"
+								placeholder="Введите ВК ID"
+								value={this.state.name}
+								onChange={this.handleInputChange}
+								required
+								/>
+							<input type="password"
+							name="password"
+							placeholder="Введите пароль"
+							value={this.state.password}
 							onChange={this.handleInputChange}
-							required
-							/>
-						<input type="password"
-						name="password"
-						placeholder="Введите пароль"
-						value={this.state.password}
-						onChange={this.handleInputChange}
-						required />
+							required />
+							
+							<input type="submit" className="button" value="Войти" />
+						</form>
+						<LogVk/>
+						{/* <Link to="/" onClick={(e)=> this.vkAuth(e)} className="login-vk">Войти с помощью ВК</Link> */}
 						
-						<input type="submit" className="button" value="Войти" />
-					</form>
-					<LogVk/>
-					{/* <Link to="/" onClick={(e)=> this.vkAuth(e)} className="login-vk">Войти с помощью ВК</Link> */}
-					
+					</div>
 				</div>
-			</div>	
+			</>	
 		)
 	};
 

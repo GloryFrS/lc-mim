@@ -25,7 +25,7 @@ class Card extends React.Component {
       api.mastersGet(params)
         .then(res => {
           this.setState({master: res.data, loader: true});
-          console.log( JSON.parse(this.state.master[0].coordinates).lat);
+          // console.log( JSON.parse(this.state.master[0].coordinates).lat);
         })
       api.masterServices(params)
         .then(res => {

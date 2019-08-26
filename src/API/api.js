@@ -8,6 +8,7 @@ export default {
   masterDel: params => axios.post('http://vk.masterimodel.com/node/masters.delete', params, headers),
   mastersAdd: params => axios.post('https://vk.masterimodel.com/node/masters.add', params, headers),
   mastersGet: params => axios.post('https://vk.masterimodel.com/node/masters.get', params, headers),
+  mastersGet2: params => axios.post('https://vk.masterimodel.com:3005/getUser', params),
   mastersEdit: params => axios.post('https://vk.masterimodel.com/node/masters.edit', params,headers),
   masterServices: params => axios.post('https://vk.masterimodel.com/node/masterServices.get', params, headers),
   masterServicesAdd: params => axios.post('https://vk.masterimodel.com/node/masterServices.add', params, headers),

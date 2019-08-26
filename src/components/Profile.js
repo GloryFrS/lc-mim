@@ -9,6 +9,7 @@ import { Alert } from 'reactstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTimesCircle } from '@fortawesome/free-solid-svg-icons';
 import Registration from './Registration';
+import Chatra from "./Chatra"
 
 import Menu from "./Menu";
 
@@ -39,15 +40,13 @@ class Profile extends React.Component {
 	}
 	async componentDidMount() {
 
-		this.setState({id: cookies.get('name')});
-		const params = new URLSearchParams();
-		params.append('id', cookies.get('name'));
 		const cook = {
 			"token": cookies.get('token')
 		};
-		
 		try {
-			const masterData = await api.mastersGet(params);
+			const masterData = await api.mastersGet2(cook);
+			const params = new URLSearchParams();
+			params.append('id', masterData.data[0].vk_id);
 			const masterServices = await api.masterServices(params);
 			const sssh = await api.sssh(cook);
 			const link = await api.linkGet();
@@ -58,8 +57,9 @@ class Profile extends React.Component {
 			if ( masterData.data === 'master not found' ) {
 				this.setState({ newMaster: true })
 			} else { 
-				this.setState({ 
-					master: masterData.data, 
+				this.setState({
+					master: masterData.data,
+					id: masterData.data[0].vk_id,
 					portfolio: masterData.data.portfolio, 
 					loader: true,
 					services: masterServices.data, 
@@ -86,7 +86,7 @@ class Profile extends React.Component {
             data.append(`file${i + 1}`, this.uploadInput.files[i]);
 		}
 		const params = new URLSearchParams();
-		params.append('id', this.state.id);
+		params.append('id', this.state.master[0].vk_id);
 		if (this.state.master.portfolio.length < 5) {
 			// console.log(str.replace(/\s/g, ''));
 			try {
@@ -171,7 +171,8 @@ class Profile extends React.Component {
 			const addressStr = !addressObj ? '' : addressObj.country.toString() + ' ' + addressObj.city.toString() + ' ' + addressObj.street.toString() + ' ' + addressObj.house.toString();  
 			
 			return (
-				<>
+				<>	
+					<Chatra/>
 					<Menu/>
 					<div className="container">
 						<div style={ alertSucces || alertErr ? {"display": 'block'} : {"display": 'none'} } onClick={this.onDismiss} className="popup-alert">
