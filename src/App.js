@@ -8,8 +8,8 @@ import {AppContext} from './components/Login';
 import LogVk from './components/LogVk';
 import api from './API/api';
 import Callback from './components/Callback';
-import {AuthProvider} from "./components/Auth";
-import { PrivateRoute } from './components/PrivateRoute';
+import { AuthProvider } from "./components/Auth";
+import { PrivateRoute, AdminRoute } from './components/PrivateRoute';
 import Moders from './components/Moders';
 
 class App extends Component {
@@ -47,7 +47,7 @@ class App extends Component {
           /> 
           <PrivateRoute path="/profile" component={Profile}/>
           <PrivateRoute path="/edit" customerTypes={this.state.customerTypes} component={EditProfile}/>
-          <PrivateRoute path="/moderators" component={Moders}/>
+          <AdminRoute path="/moderators" component={Moders}/>
           
           <Route path='/card' component={Cards}/>
           <Route path='/callback' component={Callback}/>

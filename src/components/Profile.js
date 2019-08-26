@@ -2,7 +2,7 @@ import React from 'react';
 import Popup from "reactjs-popup";
 import Loading from './Loading';
 import api from '../API/api';
-import {Link} from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 import Cookies from 'universal-cookie';
 import { VKShareButton } from 'react-share';
 import { Alert } from 'reactstrap';
@@ -32,7 +32,8 @@ class Profile extends React.Component {
 			api: '',
 			apiG: '',
 			newMaster: false,
-			loadImg: false
+			loadImg: false,
+			admin: false
 		};
 		this.handleUploadImage = this.handleUploadImage.bind(this);
 		this.onDismiss = this.onDismiss.bind(this);
@@ -43,6 +44,10 @@ class Profile extends React.Component {
 		const cook = {
 			"token": cookies.get('token')
 		};
+		const admin = await api.checkAdmin(cook);
+		if (admin) {
+			this.setState({ admin: true });
+		}
 		try {
 			const masterData = await api.mastersGet2(cook);
 			const params = new URLSearchParams();
@@ -144,6 +149,11 @@ class Profile extends React.Component {
 		if( this.state.loadImg ) {
 			return (
 				<Loading/>
+			)
+		}
+		if (this.state.admin){
+			return (
+				<Redirect to="/moderators"/>
 			)
 		}
 		
