@@ -4,6 +4,7 @@ import api from '../API/api';
 import { Card, CardImg, CardText, CardBody,
     CardTitle, CardSubtitle, Button } from 'reactstrap';
 import Cookies from 'universal-cookie';
+import Menu from "./Menu";
 
 const cookies = new Cookies();
 
@@ -72,12 +73,14 @@ class Moders extends React.Component {
             </div> 
         ): null;
         return (
-            <div className="container">
-                <div className="row">
-                    {listMasters}
+            <>
+                <Menu/>
+                <div className="container">
+                    <div className="row">
+                        {listMasters}
+                    </div>
                 </div>
-            </div>
-            
+            </>
         );
     }
 }

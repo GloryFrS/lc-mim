@@ -28,12 +28,12 @@ export const AdminRoute = withAuth(
         <Route 
             {...rest} 
             render={routeProps => 
-                (
+                (   
                     <WithAuthAdmin 
                       ComponentToProtect={RouteComponent}
                       {...rest}
                     />
-                    // <Redirect to={"/login"}/> 
+                    
             )}
         />
     )    

@@ -16,17 +16,17 @@ class withAuthAdmin extends Component {
     }
 
     async componentDidMount() {
-     
-       
       try {
         const cook = {
           "token": cookies.get('token')
         };
   
         const res = await api.checkAdmin(cook); 
+        
         if (res.status === 200) {
           this.setState({ loading: false });
         } else {
+          this.setState({ redirect: true });
           const error = new Error(res.error);
           throw error;
         }  
@@ -44,7 +44,7 @@ class withAuthAdmin extends Component {
         return null;
       }
       if (redirect) {
-        return <Redirect to="/moderators" />;
+        return <Redirect to="/profile" />;
       }
       return (
         <React.Fragment>

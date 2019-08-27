@@ -10,7 +10,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTimesCircle } from '@fortawesome/free-solid-svg-icons';
 import Registration from './Registration';
 import Chatra from "./Chatra"
-
 import Menu from "./Menu";
 
 const cookies = new Cookies();
@@ -44,10 +43,14 @@ class Profile extends React.Component {
 		const cook = {
 			"token": cookies.get('token')
 		};
-		const admin = await api.checkAdmin(cook);
-		if (admin) {
-			this.setState({ admin: true });
-		}
+		api.checkAdmin(cook)
+		.then(res => {
+			console.log(res);
+			if (res.status === 200) {
+				this.setState({ admin: true });
+			}	
+		})
+		
 		try {
 			const masterData = await api.mastersGet2(cook);
 			const params = new URLSearchParams();
