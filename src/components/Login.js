@@ -1,6 +1,7 @@
 import React from 'react';
 import Cookies from 'universal-cookie';
 import api from '../API/api';
+import { Link } from "react-router-dom"
 import { Alert } from 'reactstrap';
 import LogVk from './LogVk';
 import Chatra from "./Chatra"
@@ -76,6 +77,7 @@ class Login extends React.Component {
 							
 							<input type="submit" className="button" value="Войти" />
 						</form>
+						<Link  className="login-vk" to="/registration">Регистрация</Link>
 						<LogVk/>
 						{/* <Link to="/" onClick={(e)=> this.vkAuth(e)} className="login-vk">Войти с помощью ВК</Link> */}
 						

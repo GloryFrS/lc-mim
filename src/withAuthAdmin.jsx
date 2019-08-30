@@ -23,6 +23,7 @@ class withAuthAdmin extends Component {
   
         const res = await api.checkAdmin(cook); 
         
+        
         if (res.status === 200) {
           this.setState({ loading: false });
         } else {
@@ -44,7 +45,7 @@ class withAuthAdmin extends Component {
         return null;
       }
       if (redirect) {
-        return <Redirect to="/profile" />;
+        return <Redirect to="/login" />;
       }
       return (
         <React.Fragment>

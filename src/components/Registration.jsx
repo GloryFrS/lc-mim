@@ -1,3 +1,5 @@
+// регистрация мастера НЕ ЮЗЕРА!!!
+
 import React from 'react';
 import { Button, Modal, ModalHeader, ModalBody, Input } from 'reactstrap';
 import InputMask from 'react-input-mask';

@@ -15,11 +15,13 @@ class Moders extends React.Component {
             masters: [],
             loaded: false,
             api: '',
-            alertSucces: false
+            alertSucces: false,
+            start: 8,
+            to: 16
         }
     }
     async componentDidMount() {
-        const data = { params: { from: 'get', } };
+        const data = { params: { from: 'get', for: 0, to: 8 } };
         const cook = {
 			"token": cookies.get('token')
         };
@@ -50,6 +52,27 @@ class Moders extends React.Component {
         } 
         console.log(res);
     }
+    fetchMoreData = async () => {
+        
+        const { start, to } = this.state; 
+        const data = { params: { from: 'get', for: start, to: to } };
+        console.log(this.state.masters);
+        
+        try {
+            const res = await api.allMastersGet(data);
+            
+            this.setState({ 
+                start: this.state.start + 8, 
+                to: this.state.to + 8,
+                masters: [...this.state.masters, ...res.data]
+            });
+           
+        } catch (error) {
+            console.log(error);
+        }
+      };
+      
+      
     
     
     render() { 
@@ -57,8 +80,8 @@ class Moders extends React.Component {
         
         
         if (!loaded) { return ( <Loading/> ); }
-        const listMasters = masters ? masters.slice(0, 10).map((item, i) => 
-            <div className="col-md-4 col-12 col-sm-6" key={i}>
+        const listMasters = masters ? masters.map((item, i) => 
+            <div className="col-md-3 col-12 col-sm-6" key={i}>
                 <Card>
                     <CardImg top  src={item.avatar_url} alt="Card image cap" />
                     <CardBody>
@@ -78,7 +101,13 @@ class Moders extends React.Component {
                 <div className="container">
                     <div className="row">
                         {listMasters}
+                        
                     </div>
+                    <hr/>
+                    <div className="row justify-content-center">
+                        <Button onClick={this.fetchMoreData}>Показать еще</Button>
+                    </div>
+                
                 </div>
             </>
         );

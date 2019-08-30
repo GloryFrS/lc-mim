@@ -2,7 +2,6 @@ import React from 'react';
 import { withAuth } from './Auth';
 import { Route } from 'react-router-dom';
 import WithAuth from '../withAuth';
-import WithAuthAdmin from '../withAuthAdmin';
 
 
 export const PrivateRoute = withAuth(
@@ -18,22 +17,6 @@ export const PrivateRoute = withAuth(
                       {...rest}
                     />
                     // <Redirect to={"/login"}/> 
-            )}
-        />
-    )    
-)
-
-export const AdminRoute = withAuth(
-    ({ component: RouteComponent, isAuthorized, ...rest }) => (
-        <Route 
-            {...rest} 
-            render={routeProps => 
-                (   
-                    <WithAuthAdmin 
-                      ComponentToProtect={RouteComponent}
-                      {...rest}
-                    />
-                    
             )}
         />
     )    
