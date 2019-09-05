@@ -53,7 +53,6 @@ class RegUser extends React.Component {
     
 	
 	render() {
-		
 		return (
 			<>
 				<Chatra/>

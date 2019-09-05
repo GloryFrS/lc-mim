@@ -3,8 +3,7 @@ import Cookies from 'universal-cookie';
 import api from '../API/api';
 import { Link } from "react-router-dom"
 import { Alert } from 'reactstrap';
-import LogVk from './LogVk';
-import Chatra from "./Chatra"
+import Chatra from "./Chatra";
 // import { AppContextConsumer } from '../App';
 
 
@@ -20,6 +19,8 @@ class Login extends React.Component {
 		};
 		this.onDismiss = this.onDismiss.bind(this);
 	}
+	
+	
 
 	handleInputChange = (event) => {
 		const { value, name } = event.target;
@@ -28,8 +29,13 @@ class Login extends React.Component {
 		});
 	  }
 
+	
+
 	onSubmit = async (event) => {
 		event.preventDefault();
+		if (cookies.get('token')){
+			cookies.remove('token',  { path: '/' })
+		}
 		try {
 			const res = await api.login(JSON.stringify(this.state));
 			if (res.status === 200) {
@@ -60,6 +66,7 @@ class Login extends React.Component {
 					</div>
 					<div className='login'>
 						<h1>Вход <br/> в личный кабинет</h1>
+						<a  className="login-vk button"  href="https://oauth.vk.com/authorize?response_type=code&redirect_uri=https%3A%2F%2Fvk.masterimodel.com%3A3005%2Fauth%2Fvkontakte%2Fcallback&client_id=7044956">Войти с помощью ВК</a>
 						<form onSubmit={this.onSubmit}>
 							<input type="text"
 								name="name"
@@ -69,18 +76,15 @@ class Login extends React.Component {
 								required
 								/>
 							<input type="password"
-							name="password"
-							placeholder="Введите пароль"
-							value={this.state.password}
-							onChange={this.handleInputChange}
-							required />
+								name="password"
+								placeholder="Введите пароль"
+								value={this.state.password}
+								onChange={this.handleInputChange}
+								required />
 							
 							<input type="submit" className="button" value="Войти" />
+							<Link  className="button" to="/registration">Регистрация</Link>
 						</form>
-						<Link  className="login-vk" to="/registration">Регистрация</Link>
-						<LogVk/>
-						{/* <Link to="/" onClick={(e)=> this.vkAuth(e)} className="login-vk">Войти с помощью ВК</Link> */}
-						
 					</div>
 				</div>
 			</>	

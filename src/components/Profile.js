@@ -53,6 +53,8 @@ class Profile extends React.Component {
 		
 		try {
 			const masterData = await api.mastersGet2(cook);
+			console.log(masterData);
+			
 			const params = new URLSearchParams();
 			params.append('id', masterData.data[0].vk_id);
 			const masterServices = await api.masterServices(params);
@@ -181,8 +183,10 @@ class Profile extends React.Component {
 				
 			) : null;
 			let addressObj = JSON.parse(master[0].address);
-			const addressStr = !addressObj ? '' : addressObj.country.toString() + ' ' + addressObj.city.toString() + ' ' + addressObj.street.toString() + ' ' + addressObj.house.toString();  
 			
+			
+			const addressStr = !addressObj ? '' : addressObj.country + ' ' + addressObj.city + ' ' + addressObj.street + ' ' + addressObj.house;  
+			console.log(addressStr);
 			return (
 				<>	
 					<Chatra/>

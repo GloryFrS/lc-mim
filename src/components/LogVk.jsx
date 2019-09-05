@@ -9,7 +9,7 @@ export default withAuth(({ isAuthorized, authorize }) => (
         <Redirect to="/profile"/>
      ) : ( 
         <>  
-            <Link className="login-vk" to='/' onClick={authorize}>
+            <Link className="login-vk button" to='/' onClick={authorize}>
                 Войти с помощью ВК
             </Link>
         </>

@@ -15,14 +15,22 @@ class withAuth extends Component {
     }
 
     async componentDidMount() {
-     
-       
+      const paramsString = window.location.search;
+      const searchParams = new URLSearchParams(paramsString);
+
       try {
-        const cook = {
-          "token": cookies.get('token')
-        };
-  
-        const res = await api.checkToken(cook); 
+        let cook;
+        if (!cookies.get('token')){
+          if (searchParams.get('token')){
+            cookies.set('token', searchParams.get('token'), { path: '/' });
+          }
+        } else {
+          cook = {
+            "token": cookies.get('token')
+          };
+        }
+        const res = await api.checkToken(cook);
+        console.log(res);
         if (res.status === 200) {
           this.setState({ loading: false });
         } else {

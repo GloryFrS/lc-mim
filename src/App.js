@@ -7,7 +7,7 @@ import Cards from './components/Cards.jsx';
 import {AppContext} from './components/Login';
 import LogVk from './components/LogVk';
 import api from './API/api';
-import Callback from './components/Callback';
+import { Callback, Callback2 } from './components/Callback';
 import { AuthProvider } from "./components/Auth";
 import { PrivateRoute } from './components/PrivateRoute';
 import Moders from './components/Moders';
@@ -57,6 +57,7 @@ class App extends Component {
             )} />
           <Route path='/card' component={Cards}/>
           <Route path='/callback' component={Callback}/>
+          <Route path='/callback2' component={Callback2}/>
           <Route path='/login-vk' component={LogVk}/>
           <Route path='/registration' component={RegUser}/>
           
