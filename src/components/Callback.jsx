@@ -28,7 +28,6 @@ class Callback2 extends React.Component {
     async componentDidMount() {
         const paramsString = window.location.search;
         const searchParams = new URLSearchParams(paramsString);
-        console.log(searchParams.get('token'));
         cookies.set('token', searchParams.get('token'), { path: '/' });
         if (searchParams.get('token')){
             this.props.history.push("/profile");

@@ -57,7 +57,13 @@ class Card extends React.Component {
       
       let addressObj = JSON.parse(master[0].address);
       const geoObj = JSON.parse(master[0].coordinates);
-			const addressStr = addressObj ? addressObj.country.toString() + ' ' + addressObj.city.toString() + ' ' + addressObj.street.toString() + ' ' + addressObj.house.toString() : '';
+			let addressStr = '' ;  
+      for (const property in addressObj) {
+        if (addressObj.hasOwnProperty(property)) {
+          addressStr += addressObj[property] + " "
+        }
+      }
+      
       return (
           <div>
             <header>

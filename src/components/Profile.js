@@ -45,7 +45,6 @@ class Profile extends React.Component {
 		};
 		api.checkAdmin(cook)
 		.then(res => {
-			console.log(res);
 			if (res.status === 200) {
 				this.setState({ admin: true });
 			}	
@@ -53,8 +52,6 @@ class Profile extends React.Component {
 		
 		try {
 			const masterData = await api.mastersGet2(cook);
-			console.log(masterData);
-			
 			const params = new URLSearchParams();
 			params.append('id', masterData.data[0].vk_id);
 			const masterServices = await api.masterServices(params);
@@ -76,7 +73,6 @@ class Profile extends React.Component {
 					api: sssh.data.api,
 					apiG: sssh.data.apiG
 				});
-				console.log(masterData.data);
 			 }
 			
 			
@@ -98,14 +94,12 @@ class Profile extends React.Component {
 		const params = new URLSearchParams();
 		params.append('id', this.state.master[0].vk_id);
 		if (this.state.master.portfolio.length < 5) {
-			// console.log(str.replace(/\s/g, ''));
 			try {
 				const response = await api.masterPortfolioAdd(data);
 				if (response.data.status === 'ok') {
 					this.setState({ alertSucces: true, loadImg: false });
 
 					document.location.reload();
-					console.log(response)
 					
                 } else {
 					this.setState({alertErr: true});
@@ -139,11 +133,8 @@ class Profile extends React.Component {
 					arr.splice(i, 1);
 					this.setState({portfolio: arr});
 				}
-				console.log(response)
-				
 			} else {
 				this.setState({alertErr: true});
-				console.log(response)
 			}
 		} catch (error) {
 			console.log(error);
@@ -185,8 +176,12 @@ class Profile extends React.Component {
 			let addressObj = JSON.parse(master[0].address);
 			
 			
-			const addressStr = !addressObj ? '' : addressObj.country + ' ' + addressObj.city + ' ' + addressObj.street + ' ' + addressObj.house;  
-			console.log(addressStr);
+			let addressStr = '' ;  
+			for (const property in addressObj) {
+				if (addressObj.hasOwnProperty(property)) {
+				addressStr += addressObj[property] + " " ;
+				}
+			}
 			return (
 				<>	
 					<Chatra/>

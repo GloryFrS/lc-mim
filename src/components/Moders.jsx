@@ -77,8 +77,6 @@ class Moders extends React.Component {
     
     render() { 
         const { loaded, masters } = this.state;
-        
-        
         if (!loaded) { return ( <Loading/> ); }
         const listMasters = masters ? masters.map((item, i) => 
             <div className="col-md-3 col-12 col-sm-6" key={i}>

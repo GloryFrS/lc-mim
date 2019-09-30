@@ -30,7 +30,6 @@ class withAuth extends Component {
           };
         }
         const res = await api.checkToken(cook);
-        console.log(res);
         if (res.status === 200) {
           this.setState({ loading: false });
         } else {
