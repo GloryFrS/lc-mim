@@ -16,7 +16,7 @@
     "classnames": "^2.2.6",
     "config": "^3.2.0",
     "cookie-parser": "^1.4.3",
-    "express": "^4.16.3",
+    "express": "^4.17.3",
     "jsonwebtoken": "^8.3.0",
     "leaflet": "^1.5.1",
     "leaflet-control-geocoder": "^1.8.3",
